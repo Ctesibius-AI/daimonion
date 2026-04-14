@@ -399,7 +399,7 @@ daimonion/
 │   │   ├── synapsis_researcher.py    Agent 4: web research
 │   │   ├── synapsis_compiler.py      Agent 5: briefing compilation
 │   │   ├── qa_auditor.py             9 post-pipeline integrity checks
-│   │   ├── health_monitor.py         13 subsystem health checks
+│   │   ├── health_monitor.py         5-category system health checks
 │   │   └── wiki_ingester.py          Route vault/raw/ → wiki structure
 │   ├── validators/
 │   │   └── response_validator.py     Runtime behavioral enforcement (6 checkers)
