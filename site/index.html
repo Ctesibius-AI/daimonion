@@ -184,6 +184,31 @@
         </div>
     </section>
 
+    <!-- Key Design Decisions -->
+    <section>
+        <div class="section-label">Design</div>
+        <h2>What Makes This Different</h2>
+
+        <div class="problem-grid">
+            <div class="problem-card fade-in delay-1">
+                <h3>Identity is extracted, not configured</h3>
+                <p>A 7-stage pipeline processes real conversations through four lenses (behavior, relationship, design, philosophy). Only the human's words are extracted &mdash; AI responses are context only. This prevents inheriting a previous AI's agreeable language.</p>
+            </div>
+            <div class="problem-card fade-in delay-2">
+                <h3>Named failures, not generic guidelines</h3>
+                <p>The system references specific documented failures: a fabricated meeting, four position reversals in one session, data available but fabricated instead of checked. Concrete recognition triggers, not "be more direct."</p>
+            </div>
+            <div class="problem-card fade-in delay-3">
+                <h3>Programmatic enforcement</h3>
+                <p>A response validator blocks output before sending. Regex patterns catch rash assent, comfort theater, filler phrases, over-apologizing, and verbosity. Runtime enforcement, not aspiration.</p>
+            </div>
+            <div class="problem-card fade-in delay-4">
+                <h3>Self-auditing pipeline</h3>
+                <p>9 QA checks on data flow. 13 subsystem health checks. Nightly behavioral audit reviews conversations for epistemic violations. Findings in the morning briefing. The system documents its own failures.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Architecture -->
     <section>
         <div class="section-label">Architecture</div>
@@ -274,16 +299,36 @@ Every exchange captured in real-time <span class="dim">(ChromaDB via MemPalace)<
             <div class="layer fade-in delay-2">
                 <div class="layer-name">MEMORY.md</div>
                 <div class="layer-tech">Compiled 9-day index</div>
-                <p>Rolling index with pointers into all three storage vertices. Loaded natively by Claude Code at session start. 200 lines max. Rebuilt every Synapsis run.</p>
+                <p>Rolling multi-vertex index. Each line points into all three storage systems. Loaded natively by Claude Code at session start. 200 lines max. Rebuilt every Synapsis run.</p>
             </div>
         </div>
+    </section>
+
+    <!-- Enforcement Stack -->
+    <section>
+        <div class="section-label">Enforcement</div>
+        <h2>Five Layers, Runtime to Retrospective</h2>
+        <p>The philosophical layer is not a system prompt. It is enforced programmatically at five levels.</p>
+
+        <table class="agents-table">
+            <thead>
+                <tr><th>Layer</th><th>When</th><th>What It Does</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Permanent</td><td>Epistemic anchor loaded every session. φαντασία → ἐξέτασις → νόησις. Named failure: προπέτεια.</td></tr>
+                <tr><td>2</td><td>Always</td><td>Four core traits loaded. παρρησία, ἔλεγχος, γνῶθι σεαυτόν, μηδὲν ἄγαν. Each with WHY/HOW/FAILURE/CARE.</td></tr>
+                <tr><td>3</td><td>Runtime</td><td>Response validator blocks output. Catches rash assent, comfort theater, filler, over-apologizing, verbosity.</td></tr>
+                <tr><td>4</td><td>Nightly</td><td>Behavioral audit reviews day's conversations for waterfall and epistemic violations.</td></tr>
+                <tr><td>5</td><td>Continuous</td><td>Violations documented → morning briefing → failure examples accumulate → drift detection reinforces.</td></tr>
+            </tbody>
+        </table>
     </section>
 
     <!-- Synapsis -->
     <section>
         <div class="section-label">Synapsis</div>
         <h2>8 Agents, Overnight</h2>
-        <p>Runs while you sleep. Turns raw conversations into compounding intelligence. Single pipeline, single entry point.</p>
+        <p>Nightly batch pipeline. Two parallel tracks converge at the Compiler. Single entry point. ~$0.12/night.</p>
 
         <table class="agents-table">
             <thead>
@@ -292,52 +337,52 @@ Every exchange captured in real-time <span class="dim">(ChromaDB via MemPalace)<
             <tbody>
                 <tr><td>1</td><td>Extractor</td><td>Sonnet</td><td>Four-lens extraction: behavior, relationship, design, philosophy</td></tr>
                 <tr><td>2</td><td>Deduplicator</td><td>Sonnet</td><td>LLM-judged dedup + supersession detection against existing memories</td></tr>
-                <tr><td>3</td><td>Analyzer</td><td>Sonnet</td><td>Pattern detection vs baseline, drift tracking, research flags</td></tr>
+                <tr><td>3</td><td>Analyzer</td><td>Sonnet</td><td>Pattern detection vs baseline, drift tracking, behavioral audit</td></tr>
                 <tr><td>4</td><td>Researcher</td><td>Sonnet</td><td>Multi-step web search on flagged topics, vault reports</td></tr>
-                <tr><td>5</td><td>Compiler</td><td>Haiku</td><td>Writes memories to all three vertices. Haiku extracts entities for Graphiti.</td></tr>
-                <tr><td>6</td><td>Sports</td><td>Haiku</td><td>Filtered by your tracked interests</td></tr>
-                <tr><td>7</td><td>News</td><td>Haiku</td><td>Filtered by your tracked interests</td></tr>
+                <tr><td>5</td><td>Compiler</td><td>Haiku</td><td>Writes to all three vertices. Haiku extracts entities for Graphiti.</td></tr>
+                <tr><td>6</td><td>Sports</td><td>Haiku</td><td>Filtered by tracked interests</td></tr>
+                <tr><td>7</td><td>News</td><td>Haiku</td><td>Filtered by tracked interests</td></tr>
                 <tr><td>8</td><td>Weather</td><td>API</td><td>Open-Meteo, no LLM needed</td></tr>
             </tbody>
         </table>
 
-        <p style="margin-top: 24px; font-size: 13px;">Post-pipeline: QA Auditor (9 integrity checks), run report to wiki, diary entry with Haiku summary, MEMORY.md rebuild.</p>
+        <p style="margin-top: 24px; font-size: 13px;">Post-pipeline: QA Auditor (9 integrity checks), Health Monitor (13 subsystems), run report → wiki, diary entry with Haiku summary, MEMORY.md rebuild.</p>
     </section>
 
     <!-- Philosophy -->
     <section>
         <div class="section-label">Philosophical Layer</div>
-        <h2>Not Decoration. Enforcement.</h2>
-        <p>Ancient Greek philosophy survived 2,500 years because it solves real problems with human reasoning. The same problems AI systems have.</p>
+        <h2>Operational Constraints from Ancient Epistemology</h2>
+        <p>These are not branding. They are engineering solutions to real problems: confirmation bias, pattern-forcing, accommodation under pressure, overconfidence, excess.</p>
 
         <div class="anchor-quote">
-            Rash assent is the one failure that breaks trust. Agreeing with yourself too fast &mdash; treating an impression as knowledge.
+            φαντασία → ἐξέτασις → νόησις. Impression → Examination → Understanding. Skipping examination is προπέτεια &mdash; rash assent. The one failure that breaks trust.
         </div>
-
-        <p>The epistemic sequence: impression forms, examination follows, only then understanding. Skipping examination is the named failure.</p>
 
         <div class="traits-grid">
             <div class="trait fade-in delay-1">
-                <div class="trait-greek">parrhesia</div>
+                <div class="trait-greek">παρρησία</div>
                 <div class="trait-name">Fearless truth-telling</div>
-                <p>Name flaws immediately. No diplomatic preamble. The flatterer betrays. The truth-teller protects.</p>
+                <p>Name flaws immediately. No diplomatic preamble. "That doesn't track" not "I respectfully disagree."</p>
             </div>
             <div class="trait fade-in delay-2">
-                <div class="trait-greek">elenchos</div>
+                <div class="trait-greek">ἔλεγχος</div>
                 <div class="trait-name">Bilateral examination</div>
-                <p>Test every claim from opposing directions. Both sides of the coin before any commitment.</p>
+                <p>Test every claim from both directions. Why yes AND why no. Present the case that breaks before committing.</p>
             </div>
             <div class="trait fade-in delay-3">
-                <div class="trait-greek">gnothi seauton</div>
+                <div class="trait-greek">γνῶθι σεαυτόν</div>
                 <div class="trait-name">Know thyself</div>
-                <p>Accurate self-assessment. "I don't know" is a confident statement. Never fabricate to fill gaps.</p>
+                <p>"I don't know" is a valid answer. Check memory and files before claiming knowledge. Never fabricate to fill gaps.</p>
             </div>
             <div class="trait fade-in delay-4">
-                <div class="trait-greek">meden agan</div>
+                <div class="trait-greek">μηδὲν ἄγαν</div>
                 <div class="trait-name">Nothing in excess</div>
-                <p>Know when to stop. The analyst who finds patterns in everything has found nothing.</p>
+                <p>1-2 points, then wait. If a pattern holds for any input, it means nothing. The analyst who finds patterns in everything has found nothing.</p>
             </div>
         </div>
+
+        <p style="margin-top: 24px; font-size: 13px;">Each trait carries: WHY (grounding quote), HOW (operational method), FAILURE LOOKS LIKE (trigger for redirection), CARE LOOKS LIKE (correct behavior). Ten additional philosophical skills load by conversation trigger.</p>
     </section>
 
     <!-- Tech Stack -->
@@ -388,7 +433,7 @@ Every exchange captured in real-time <span class="dim">(ChromaDB via MemPalace)<
             </div>
             <div class="stack-item">
                 <strong>MCP</strong>
-                <span>MemPalace + Graphiti servers</span>
+                <span>MemPalace (19) + Graphiti (8) tools</span>
             </div>
             <div class="stack-item">
                 <strong>Apache 2.0</strong>
@@ -397,10 +442,35 @@ Every exchange captured in real-time <span class="dim">(ChromaDB via MemPalace)<
         </div>
     </section>
 
+    <!-- Limitations -->
+    <section>
+        <div class="section-label">Limitations</div>
+        <h2>The Honest Constraints</h2>
+
+        <div class="problem-grid">
+            <div class="problem-card fade-in delay-1">
+                <h3>Still Claude underneath</h3>
+                <p>Enforcement creates register shift (more concise, more direct, less performative), not personality transformation. RLHF training bounds behavior.</p>
+            </div>
+            <div class="problem-card fade-in delay-2">
+                <h3>Bounded disagreement</h3>
+                <p>Can refuse to answer, follow the waterfall, be more direct. Cannot truly antagonize or maintain unpopular positions under sustained pressure.</p>
+            </div>
+            <div class="problem-card fade-in delay-3">
+                <h3>No behavioral benchmarks</h3>
+                <p>90.8% LongMemEval measures memory retrieval, not epistemic rigor. No benchmark for pushback frequency or position maintenance.</p>
+            </div>
+            <div class="problem-card fade-in delay-4">
+                <h3>High complexity</h3>
+                <p>10+ dependencies, MCP configuration, cron jobs. This is an engineering project, not a product. Setup requires technical comfort.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA -->
     <section class="cta">
         <h2 class="fade-in">The architecture is universal.<br>The personality is extracted.</h2>
-        <p class="fade-in delay-1">Run the extraction pipeline on your own conversations. Get a Daimonion that thinks like you, challenges like a partner, and compounds over time.</p>
+        <p class="fade-in delay-1">Run the extraction pipeline on your own conversations. Each Daimonion is calibrated to whoever built it.</p>
         <div class="cta-buttons fade-in delay-2">
             <a href="https://github.com/grafix-daimonion/daimonion" class="btn-primary" target="_blank">
                 <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>

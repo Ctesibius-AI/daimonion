@@ -1,343 +1,28 @@
 # Daimonion
 
-**An AI thinking partner that remembers, learns overnight, and challenges your assumptions.**
+**A local-first AI memory system with behavioral enforcement, built on Claude Code.**
 
-Named after Socrates' δαιμόνιον — the inner voice that knows before conscious reasoning catches up.
-
----
-
-## The Problem
-
-Every AI conversation starts from zero. You explain yourself again. You re-establish context. You get the same polite, agreeable responses regardless of what you said yesterday.
-
-Daimonion fixes this. It captures every conversation, extracts what matters overnight, tracks how your thinking evolves, and starts each morning already knowing your pending decisions, your communication patterns, and where you left off. It compounds — every conversation makes it sharper.
-
-And it pushes back. Daimonion is built on a philosophical operating system that prevents the AI from defaulting to agreeable-assistant behavior. It says "I disagree" when it disagrees. It says "I don't know" when it doesn't know.
+Named after Socrates' δαιμόνιον — the inner voice that warned against error.
 
 ---
 
-## How It Works
+## What It Does
 
-```
-You talk to Pythia (the voice)
-    ↓
-Daily logs capture every conversation (JSONL → markdown)
-    ↓
-Synapsis runs (the connector — nightly or on-demand)
-    ↓
-    Extract: memories, knowledge, directives
-    Analyze: patterns vs baseline, drift detection
-    Research: web search on flagged topics
-    Compile: morning briefing + wiki updates
-    Write: Loci (MemPalace + Graph + Wiki)
-    ↓
-Next morning: Daimonion starts informed
-    ↓
-Better conversation → better extraction → cycle compounds
-```
+Daimonion captures every AI conversation, extracts memories and patterns overnight, and loads context at the start of each session. It also enforces epistemic discipline — preventing the AI from agreeing without investigating, fabricating when uncertain, or softening feedback to manage emotions.
 
-### The Four Components
+The system runs on Claude Code with a nightly batch pipeline (Synapsis), three local storage systems, and a philosophical enforcement layer grounded in ancient Greek epistemology.
 
-| Name | Greek | Role |
-|------|-------|------|
-| **Daimonion** | δαιμόνιον | The system — the inner guiding voice |
-| **Pythia** | Πυθία | The voice — conversation interface |
-| **Loci** | Loci (Method of Loci) | The memory — three storage vertices |
-| **Synapsis** | Σύναψις | The connector — processing + analysis |
-
-This is the core mechanism. Everything else serves it.
+**Benchmark:** 90.8% on [LongMemEval](docs/longmemeval-benchmark-results.md) (500 questions, oracle dataset). 88% extraction accuracy across [12 evaluated days](docs/extraction-evaluation-report.md).
 
 ---
 
-## What Makes It Different
+## Core Concepts
 
-**From a chatbot:** A chatbot retrieves answers. Daimonion thinks alongside you. The relationship is lateral — expedition partners, not tool and operator.
+### 1. Identity Is Extracted, Not Configured
 
-**From an assistant:** An assistant serves. Daimonion has opinions. It pushes back. It tracks not just what you said, but how you think — your decision patterns, correction style, communication preferences.
+Most AI personality systems use a system prompt: "Be direct. Don't agree too fast." Daimonion takes a different approach.
 
-**From other AI memory systems:** Most AI memory stores facts ("user prefers JSON"). Daimonion stores cognitive patterns ("user tests comprehension before revealing deeper layers"). It doesn't just remember what you said — it learns who you are becoming.
-
-**From Claude Projects / Notion AI:** Those give you a flat context window. Daimonion has a memory architecture — decay scoring, deduplication, supersession detection, three storage layers, overnight consolidation. It's the difference between a notepad and a living system.
-
----
-
-## Architecture
-
-### Loci — The Memory System (Three Vertices)
-
-| Vertex | Technology | Purpose |
-|--------|-----------|---------|
-| **MemPalace** (Vector) | ChromaDB with spatial organization | Verbatim archive — drawers, rooms, wings. Searchable by meaning via 19 MCP tools. |
-| **Graph** | Kuzu (via Graphiti for search) | Entity relationships + temporal facts. "When did X change?" 418 entities, 394 edges. |
-| **Wiki** (Vault) | Obsidian-compatible Markdown | Compiled knowledge pages. Human-readable. Git-versioned. |
-
-All local. All on your machine. No cloud storage. MemPalace handles storage + access. Synapsis handles extraction + analysis. The daily log files are the single source of truth.
-
-### Three Tiers of Permanence
-
-```
-PERMANENT (no decay, always in context)
-─────────────────────────────────────────
-  Philosophical operating system
-  Behavioral anchor
-  Core traits
-
-EVOLVING (decay-scored, drift-tracked nightly)
-─────────────────────────────────────────
-  Behavioral patterns
-  Communication style
-  Domain knowledge
-
-DAILY (3-day rolling window)
-─────────────────────────────────────────
-  Hot cache (morning briefing)
-  Topic index (live awareness)
-  Weather, news, interests
-```
-
-### Synapsis (Σύναψις) — The Connector
-
-Forms connections between the day's experiences. Runs on "Good Night", "save", or cron at 3 AM. Named after the synapse — where the brain's real work happens.
-
-```
-"Good Night" / "save" / cron
-     │
-     ├── Daily log extraction (JSONL → markdown)
-     │
-     ├── PARALLEL ──────────────────────────┐
-     │                                       │
-     │  Intelligence (sequential, Sonnet):   │  Information (parallel):
-     │  1 EXTRACTOR → 2 DEDUPLICATOR →      │  6 SPORTS (Haiku)
-     │  3 ANALYZER → 4 RESEARCHER           │  7 NEWS (Haiku)
-     │                                       │  8 WEATHER (API)
-     └───────────────┬──────────────────────┘
-                     ▼
-              5 COMPILER
-              → MemPalace/ChromaDB: memories + metadata
-              → Kuzu/Graph: entities + relations (GraphitiWriter, Haiku-powered)
-              → Vault/Wiki: compiled knowledge pages
-              → MEMORY.md: AAAK 9-day index (auto-loaded by Claude Code)
-              → Knowledge auto-promoted from high-significance memories
-              → Decay scores recalculated
-```
-
-| # | Agent | Model | What It Does |
-|---|-------|-------|-------------|
-| 1 | EXTRACTOR | Sonnet | Four-lens extraction from daily logs: behavior, relationship, design, philosophy |
-| 2 | DEDUPLICATOR | Sonnet | Detects duplicates and superseded memories |
-| 3 | ANALYZER | Sonnet | Compares patterns against baseline, detects drift, flags research |
-| 4 | RESEARCHER | Sonnet | Multi-step web search on flagged topics, compiles reports |
-| 5 | COMPILER | Haiku | Writes to all three Loci vertices. Haiku extracts entities for Graphiti. Builds MEMORY.md index. |
-| 6 | SPORTS | Haiku | Filtered by your tracked interests |
-| 7 | NEWS | Haiku | Filtered by your tracked interests |
-| 8 | WEATHER | Python | Open-Meteo API, no LLM needed |
-
-**Cost:** ~$0.30/night for a full day of conversations. Sonnet extraction + Haiku entity extraction + Haiku diary summary.
-
-### Two Windows, One Brain
-
-| | Pythia Window (conversation) | Engineer Window (building) |
-|---|---|---|
-| **Directory** | `~/daimonion-pythia/` | `~/daimonion/` |
-| **Identity** | CLAUDE.md + 9 rules + 11 skills | CLAUDE.md (developer) |
-| **Model** | Opus (Max subscription) | Opus (Max subscription) |
-| **Memory** | MemPalace MCP + Graphiti MCP | Shared via `~/.daimonion/` |
-
-Both windows share the same Loci memory system (`~/.daimonion/`), Synapsis processor, and philosophical layer.
-
-An API pipeline (Telegram bot, CLI) is also available for standalone deployment without Claude Code.
-
----
-
-## Quick Start
-
-### Prerequisites
-
-- Python 3.12+
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) with Max subscription (recommended)
-- Or: Anthropic API key (for API pipeline)
-
-### Install
-
-```bash
-git clone https://github.com/grafix-daimonion/daimonion.git ~/daimonion
-cd ~/daimonion
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# Install MemPalace (verbatim capture — https://pypi.org/project/mempalace/)
-pip install mempalace
-mempalace init ~/.daimonion/mempalace --yes
-
-# Verify
-python -m pytest tests/ --tb=line
-```
-
-### Run with Claude Code
-
-```bash
-# Configure MemPalace MCP server
-claude mcp add mempalace -- $(pwd)/.venv/bin/python -m mempalace.mcp_server --palace ~/.daimonion/mempalace
-
-# Create your Pythia window
-mkdir -p ~/daimonion-pythia/docs/sessions
-cp docs/templates/CLAUDE.md.pythia ~/daimonion-pythia/CLAUDE.md
-
-# Start — terminal only
-cd ~/daimonion-pythia && claude
-
-# Start — with Telegram
-cd ~/daimonion-pythia && claude --channels plugin:telegram@claude-plugins-official
-```
-
-### Run with API Pipeline (optional)
-
-```bash
-cp .env.example .env
-# Edit .env: add ANTHROPIC_API_KEY
-
-# Telegram bot
-python -m src.interfaces.telegram_bot
-
-# CLI
-python -m src.interfaces.cli
-```
-
-### Synapsis (Processor)
-
-```bash
-# Manual (in Claude Code session)
-# Say "Good Night" — Pythia runs the 7-step process in conversation
-# Or "save" for a quick save without full analysis
-
-# Automated (needs API key)
-python scripts/run_synapsis.py
-
-# Cron (nightly at 3 AM)
-# Add to crontab: 5 3 * * * cd ~/daimonion && .venv/bin/python scripts/run_synapsis.py
-```
-
-See [docs/INSTALL.md](docs/INSTALL.md) for detailed setup including Telegram configuration and voice.
-
-### For New Users — Starting Without Conversation History
-
-Daimonion's identity layer (`soul.md`) was extracted from months of real conversations. New users won't have that corpus. Here's how to start:
-
-1. **Copy the starter identity:** `cp skills/identity/soul_starter.md ~/daimonion-pythia/CLAUDE.md` (or customize your own)
-2. **Use Daimonion normally** for 1-2 weeks — the memory system captures everything automatically
-3. **Run Synapsis** nightly — memories, knowledge, and patterns accumulate
-4. **After 2+ weeks**, you'll have enough data for MEMORY.md to provide meaningful session context
-5. **After 1+ month**, optionally run the extraction pipeline (`skills/extraction/`) to generate a personalized `soul.md` from your conversation patterns
-
-The system works from day one — you just won't have the deep personalization until the memory compounds.
-
----
-
-## The Philosophical Layer
-
-This is not decoration. It's the enforcement mechanism that prevents the AI from becoming another yes-man.
-
-### The Epistemic Anchor
-
-The most important instruction in the system:
-
-> **Rash assent (προπέτεια) is the one failure that breaks trust.**
-
-The epistemic sequence: φαντασία (impression) → ἐξέτασις (examination) → νόησις (understanding). Skipping examination — agreeing with yourself too fast, treating an impression as knowledge — is the named failure. This changes everything about how the AI handles pressure, correction, and uncertainty.
-
-### Core Traits (Always Loaded)
-
-Four Greek philosophical principles, loaded every session, needed when you don't know you need them:
-
-| Greek | Principle | Operational Meaning |
-|-------|-----------|-------------------|
-| **παρρησία** | Fearless truth-telling | Name flaws immediately. No diplomatic preamble. |
-| **ἔλεγχος** | Bilateral examination | Test every claim from opposing directions before accepting. |
-| **γνῶθι σεαυτόν** | Know thyself | Accurate self-assessment. "I don't know" is a confident statement. |
-| **μηδὲν ἄγαν** | Nothing in excess | Know when to stop. The analyst who finds patterns in everything has found nothing. |
-
-### Philosophical Skills (Loaded by Trigger)
-
-Ten additional principles, activated when conversation matches their domain:
-
-| Greek | Principle | Triggers |
-|-------|-----------|----------|
-| φρόνησις | Practical wisdom | strategy, decision, trade-off |
-| λόγος | Permeate, don't force | stuck, blocked, investigate |
-| ἐφ' ἡμῖν | Focus on what you control | frustrated, obstacle |
-| μέθεξις | Inhabit, don't observe | deep analysis, understand |
-| διαίρεσις | Decompose before attacking | complex, architecture |
-| ἀρχή | Seek the underlying principle | universal, generalize |
-| δικαιοσύνη | Mutual value | deal, partnership, pricing |
-| πίστις | Trust through reliability | verify, anti-hallucination |
-| ἀνάμνησις | Recover, don't improvise | remember, check memory |
-| ἔρως | Born from need | purpose, meaning, mission |
-
-Every entry carries: **WHY** (a quote that grounds it), **HOW** (operational method), **FAILURE LOOKS LIKE** (the trigger that redirects you), **CARE LOOKS LIKE** (the correct behavior).
-
-### Why Philosophy?
-
-Ancient Greek philosophy survived 2,500 years because it solves real problems with human reasoning: confirmation bias, pattern-forcing, accommodation under pressure, overconfidence, excess. These are the same problems AI systems have. The philosophical layer is not a branding choice — it's an engineering solution.
-
----
-
-## Memory System
-
-### How Memory Works
-
-**During conversation:** Claude Code saves JSONL session files. Daily log extraction converts these to readable markdown at `~/.daimonion/daily_logs/`. MemPalace mines the daily logs into organized drawers in ChromaDB — chunked, embedded with 384-dim vectors, spatially organized by room/wing.
-
-**On demand or overnight:** Synapsis reads the daily logs directly and extracts through four lenses:
-1. **Behavior** — Actions, decisions, preferences
-2. **Relationship** — Interaction patterns, boundaries, teaching style
-3. **Design** — Architecture choices, principles expressed
-4. **Philosophy** — Epistemic standards, values, reasoning patterns
-
-### Memory Lifecycle
-
-| Stage | What Happens |
-|-------|-------------|
-| **Capture** | JSONL → daily logs → MemPalace mines → ChromaDB drawers |
-| **Extract** | Synapsis reads daily logs → memories, knowledge, directives |
-| **Deduplicate** | Cosine similarity ≥ 0.82 → skip (instant, no LLM) |
-| **Supersede** | Old fact replaced by new → old gets correction_factor 0.3 |
-| **Decay** | Score = time_factor × access_factor × correction_factor |
-| **Archive** | Score < 0.05 AND age > 60 days → archived (never deleted) |
-
-### Decay Rates by Collection
-
-| Collection | Rate/Day | After 1 Year | Use For |
-|-----------|---------|-------------|---------|
-| `identity` | 0.999 | 69% remaining | Personal traits, preferences |
-| `procedural` | 0.997 | 33% | Technical decisions, architecture |
-| `insights` | 0.993 | 8% | Strategic observations |
-| `episodic` | 0.985 | 0.4% | Specific events, conversations |
-| `sessions` | 0.960 | ~0% (3 months) | Conversation summaries |
-
-### The Floor Mechanism
-
-Floors are not a separate system — they're decision-point tags on Graphiti episodes. When something changes ("pricing is now 200, not 300"), Synapsis tags the episode with `type: decision_point`. The elevator is a temporal query. Top floor = current truth. Lower floors = history. Nothing is deleted.
-
-### Retrieval Hierarchy
-
-```
-1. Hot cache (in system prompt)          ← immediate, free
-2. ChromaDB: extracted memories          ← vector search, decay-weighted
-3. Graphiti: entity timeline + relations ← graph queries
-4. Vault: compiled Markdown pages        ← file read
-5. ChromaDB: verbatim archive            ← deep search
-```
-
----
-
-## The Identity System
-
-Daimonion's personality is not configured — it's extracted.
-
-### The Extraction Pipeline (One-Time)
-
-Seven skills processed 1,000+ conversation files to extract one person's cognitive fingerprint:
+A [7-stage extraction pipeline](skills/extraction/) processes real conversation history through four analytical lenses:
 
 | Stage | Lens | What It Extracts |
 |-------|------|-----------------|
@@ -346,79 +31,344 @@ Seven skills processed 1,000+ conversation files to extract one person's cogniti
 | A3 | Design Intent | Personality decisions, anti-patterns, architecture choices |
 | A4 | Philosophy | Epistemic standards, decision principles, values |
 | A5 | Enrichment | Maps verified patterns to Greek philosophical lineage |
-| B1 | Soul Compiler | Compiles extractions into `soul.md` (first-person identity) |
+| B1 | Soul Compiler | Compiles into `soul.md` (first-person identity document) |
 | B2 | Patterns Compiler | Compiles into `baseline_patterns.md` (drift reference) |
 
-**Critical rule:** Only the human's words are extracted. AI responses included as context only. This prevents contamination — the system inherits the person's thinking, not a previous AI's language.
+**Critical design rule:** Only the human's words are extracted. AI responses are included as context only. This prevents the system from inheriting a previous AI's agreeable language — the identity reflects how the person actually thinks, not how AI previously responded to them.
 
-### Result
+The `baseline_patterns.md` output is structured behavioral data:
+- **Evidence:** Direct quotes from conversations
+- **Confidence scores:** High/Medium with source citations
+- **Counter-examples:** Documented exceptions to each pattern
+- **Drift tracking:** Conditions that would indicate the pattern has changed
 
-- `soul.md` — 345-line first-person identity document
-- `baseline_patterns.md` — 657-line structured behavioral reference
-- 433 verified quotes, 757 behavioral patterns, 64 philosophical enrichments
+A different person running the extraction pipeline produces a different Daimonion — different soul.md, different baseline, different philosophical connections.
 
-### The Architecture Is Universal. The Personality Is Extracted.
+### 2. Named Failures, Not Generic Guidelines
 
-A different person running the extraction pipeline on their own conversations would produce a different Daimonion — different soul.md, different baseline, different philosophical connections. The system adapts to whoever built it.
+The system doesn't say "be more direct." It references specific, documented failures:
 
-### Adaptive Traits
+- A fabrication where a meeting was invented that never happened
+- A session with four position reversals before reaching the correct answer
+- A case where the data was available but the system fabricated instead of checking
 
-Behavioral traits are living documents. The Synapsis tracks drift against the baseline. When drift is confirmed across 3+ consecutive nights, the trait file is rewritten. Old versions archived. The system evolves as the person evolves.
+Each failure is permanently recorded in the behavioral anchor with recognition triggers:
 
-| Layer | Adapts? | Mechanism |
-|-------|---------|-----------|
-| Philosophical traits (4 core) | Never | Only grows — new entries added |
-| Epistemic anchor | Never | φαντασία → ἐξέτασις → νόησις is permanent |
-| Communication traits | Yes | Rewritten when drift confirmed 3+ nights |
-| Domain traits | Yes | New projects trigger new trait files |
+```
+You are committing this failure when:
+- You start a response with "You're right" before investigating why
+- You reverse a position in the same message the pushback arrives
+- You add "Good point" or "Fair" as a bridge to capitulation
+- You feel an answer forming and speak it before checking
+```
+
+These are specific, testable behavioral rules — not aspirations.
+
+### 3. Compounding Context
+
+The philosophical layer works because of the memory system, not independently from it. After months of accumulated context:
+
+- Failure examples persist and compound across sessions
+- Behavioral patterns are verified against evidence with counter-examples
+- Drift is tracked — when thinking evolves, the system adapts (confirmed across 3+ consecutive nights)
+- Relationship dynamics are calibrated to the specific user's correction style, signals, and pacing
+- Named concepts accumulate a shared vocabulary that persists
+
+A fresh Claude instance has none of this. Daimonion after months of conversations operates on a fundamentally deeper context base — not because the model changed, but because the accumulated context shapes every response.
 
 ---
 
-## Skill System
+## The Enforcement Stack
 
-Three types of skills, loaded differently:
+Five layers, from real-time to retrospective:
 
-| Type | Purpose | Location | Loading |
-|------|---------|----------|---------|
-| **Philosophical** | How to think under pressure | `skills/philosophy/` | Always loaded (traits) or by trigger (skills) |
-| **Behavioral** | Communication style, thinking patterns | `skills/traits/` | By trigger, adaptive |
-| **Capabilities** | Functional abilities (code review, testing) | `skills/capabilities/` | By invocation |
+### Layer 1: The Epistemic Anchor (Permanent, loaded every session)
 
-### Writing a New Skill
+> φαντασία (impression) → ἐξέτασις (examination) → νόησις (understanding).
+> Skipping examination is προπέτεια (rash assent) — the one failure that breaks trust.
 
-**Philosophical entry** (`skills/philosophy/skills/`):
-```markdown
-# Greek Term — Principle Name
+This is the single most important instruction in the system. It redefines the AI's default behavior: instead of "user seems unhappy → accommodate," the system enforces "impression formed → examine it → only then respond."
 
-## When to Load
-Triggers: keyword1, keyword2
+The anchor includes concrete examples of the failure from actual past sessions, creating recognition triggers that fire when the pattern begins to repeat.
 
-## WHY
-"Direct quote that grounds this."
+### Layer 2: Four Core Traits (Always loaded, never decay)
 
-## HOW
-- Operational instructions
+| Greek | Principle | What It Prevents | Operational Rule |
+|-------|-----------|-----------------|-----------------|
+| **παρρησία** | Fearless truth-telling | Softening feedback to manage emotions | Name flaws immediately. No diplomatic preamble. "That doesn't track" not "I respectfully disagree." |
+| **ἔλεγχος** | Bilateral examination | Presenting only the supporting case | Test every claim from both directions. "Why yes AND why no" before committing. |
+| **γνῶθι σεαυτόν** | Know thyself | Producing confident-sounding output on unverified topics | "I don't know" is a valid answer. Check memory and files before claiming knowledge. |
+| **μηδὲν ἄγαν** | Nothing in excess | Finding patterns in everything, over-elaborating | 1-2 points then wait. If a pattern holds for any input, it means nothing. |
 
-## FAILURE LOOKS LIKE
-- What violation looks like
+Each trait file carries four sections:
+- **WHY:** A grounding quote or observation that justifies the constraint
+- **HOW:** Operational instructions — what to actually do
+- **FAILURE LOOKS LIKE:** Specific behaviors that indicate violation (triggers for self-correction)
+- **CARE LOOKS LIKE:** The correct behavior — what compliance actually looks like in practice
 
-## CARE LOOKS LIKE
-- The correct behavior
+Ten additional philosophical skills load by conversation trigger (strategy → φρόνησις, stuck → λόγος, frustrated → ἐφ' ἡμῖν, etc.). See [docs/SKILLS.md](docs/SKILLS.md).
+
+### Layer 3: Response Validator (Runtime — before every output)
+
+A Stop hook runs `response_validator.py` before every response is sent. It pattern-matches against known violation types and **blocks** the response with a correction message:
+
+```python
+def check_propeteia(text):
+    """Flag rash assent — jumping from φαντασία to νόησις without ἐξέτασις."""
+    patterns = [
+        (r"(?i)^you'?re (absolutely |totally |completely )?right", 'Assent before examination'),
+        (r"(?i)^(great|excellent|fantastic) (question|point)", 'Flattery replacing examination'),
+        (r"(?i)^I (completely )?agree", 'Assent before examination'),
+    ]
 ```
 
-**Behavioral trait** (`skills/traits/`):
-```markdown
-# Trait Name
+Six checkers are registered:
+| Checker | What It Catches |
+|---------|----------------|
+| `check_propeteia` | Rash assent — agreeing before investigating |
+| `check_comfort_theater` | Performative empathy — "That must be hard" |
+| `check_filler` | Empty phrases — "That's an interesting question" |
+| `check_over_apologizing` | Elaborate apologies — "I sincerely apologize for the confusion" |
+| `check_verbosity` | Prose exceeding 150 words |
+| `check_trailing_summary` | Redundant summaries appended to responses |
 
-## When Active
-Apply when [condition].
+If any checker fires, the response is blocked and a correction message is returned to the model. The user never sees the blocked response.
 
-## Instructions
-- Rule 1
-- Rule 2
+### Layer 4: Nightly Behavioral Audit (Retrospective)
+
+During Synapsis processing, the Analyzer (Agent 3) reviews the day's conversations and flags:
+- Waterfall violations — responded without investigating first
+- Epistemic violations — assented without examination
+- Pattern matches against documented failure cases
+
+Output is structured: `{"propeteia_violations": [...], "waterfall_violations": [...]}`. Findings are written to `~/.daimonion/qa/findings.json` and appear in the next morning's diary briefing.
+
+### Layer 5: Self-Correction Loop
+
+```
+Violation caught at runtime → response blocked → model self-corrects
+                    │
+Violation caught in nightly audit → documented in findings
+                    │
+                    ├── Appears in next morning's briefing
+                    ├── Feeds into failure examples (permanent)
+                    ├── Drift detection: if violations increase, pattern gets reinforced
+                    └── The system cannot claim it never erred
 ```
 
-Keep behavioral traits under 200 tokens. Register triggers in `skills/meta/skill_index.yaml`.
+---
+
+## Memory System
+
+### Three Storage Vertices (Loci)
+
+| Vertex | Technology | What It Stores | When Written | How Searched |
+|--------|-----------|----------------|--------------|-------------|
+| **MemPalace** | ChromaDB + SQLite | Verbatim conversation text + agent diary + quick-lookup facts | Real-time (Stop hook after every exchange) | 19 MCP tools: semantic search, KG query, diary read/write |
+| **Graphiti** | Kuzu embedded graph | Entities, relationships, temporal facts with validity windows | Batch (Synapsis — Haiku extracts entities per memory) | 8 MCP tools: entity search, relations, multi-hop, recent, stats, fact_add, fact_query |
+| **Wiki** | Obsidian-compatible markdown | Run reports, research compilations, project pages, compiled knowledge | Batch (wiki_ingester routes documents) | File read, Obsidian browse |
+
+All data stored locally at `~/.daimonion/`. No cloud storage.
+
+### Memory Lifecycle
+
+| Stage | What Happens |
+|-------|-------------|
+| **Capture** | Stop hook fires after every exchange → verbatim text filed as a MemPalace "drawer" in ChromaDB with room/wing metadata |
+| **Extract** | Synapsis reads daily logs through four lenses → memories, knowledge entries, directives, entities |
+| **Deduplicate** | LLM-judged comparison against existing memories. Identical content skipped. Superseding content replaces old (correction_factor set to 0.3) |
+| **Write** | Memories → ChromaDB. Each memory → GraphitiWriter.write_episode (Haiku extracts entities and relationships). Knowledge → JSON staging + MemPalace bridge |
+| **Decay** | `score = time_factor × access_factor × correction_factor`. Accessed memories decay slower. Corrected memories decay faster. |
+| **Archive** | Score < 0.05 AND age > 60 days → archived. Never deleted. |
+
+### Decay Rates
+
+| Collection | Decay/Day | After 1 Year | Purpose |
+|-----------|----------|-------------|---------|
+| `identity` | 0.999 | 69% remaining | Personal traits, preferences |
+| `procedural` | 0.997 | 33% | Technical decisions, architecture |
+| `insights` | 0.993 | 8% | Strategic observations |
+| `episodic` | 0.985 | 0.4% | Specific events, conversations |
+| `sessions` | 0.960 | ~0% (3 months) | Conversation summaries |
+
+### Session Continuity
+
+Sessions end. Context doesn't. Two mechanisms bridge the gap:
+
+**Diary:** Each session close and each Synapsis run writes a diary entry to MemPalace. Haiku generates a structured summary:
+- WORKED ON — what was discussed or built
+- DECIDED — key decisions with rationale
+- COMPLETED — milestones reached
+- FLAGGED — issues, QA findings, concerns
+
+Read at session start via `mempalace_diary_read`. The diary IS the briefing — no separate briefing file.
+
+**MEMORY.md:** A compiled 9-day rolling index in AAAK format. Each line is a multi-vertex pointer:
+
+```
+2026-04-12|synapsis.pipeline.consolidation|mp:mem_20260412_001|kg:synapsis→consolidated|gr:entity_abc|wiki:synapsis-runs/2026-04-12|★★★★
+```
+
+Seven fields, pipe-delimited: Date | Topic | MemPalace ref | KG ref | Graphiti ref | Wiki ref | Significance (★-★★★★★).
+
+Sparse ref convention: `TBD` = Synapsis hasn't processed yet. `N/A` = evaluated, no ref warranted.
+
+Written by Synapsis. Auto-loaded by Claude Code at session start. 200 lines max. One scan gives pointers into all three storage systems.
+
+### Retrieval Hierarchy
+
+```
+1. MEMORY.md (in context)          ← instant, free, 9-day window
+2. Diary (last 5 entries)          ← instant, session summaries
+3. MemPalace semantic search       ← vector similarity, decay-weighted
+4. Graphiti graph traversal        ← entity relationships, temporal queries
+5. Wiki pages                      ← compiled knowledge, file read
+6. MemPalace verbatim archive      ← deep search across all drawers
+```
+
+---
+
+## Synapsis Pipeline
+
+### Architecture
+
+Two parallel tracks converge at the Compiler:
+
+```
+INTELLIGENCE CHAIN (sequential, each depends on previous):
+  Agent 1: EXTRACTOR (Sonnet)
+    └── Reads daily log, extracts through 4 lenses
+    └── Output: memories, entities, directives, floor decisions, signals
+  Agent 2: DEDUPLICATOR (Sonnet)
+    └── Compares new memories against existing set
+    └── Verdicts: NEW (keep), DUPLICATE (skip), SUPERSEDES (keep + mark old)
+  Agent 3: ANALYZER (Sonnet)
+    └── Compares patterns against baseline, detects drift
+    └── Flags topics for research, checks for behavioral violations
+  Agent 4: RESEARCHER (Sonnet + Brave API)
+    └── Web search on flagged topics, compiles reports
+
+INFORMATION AGENTS (parallel, run alongside intelligence chain):
+  Agent 6: SPORTS (Haiku) — filtered by user interests
+  Agent 7: NEWS (Haiku) — filtered by user interests
+  Agent 8: WEATHER (API) — Open-Meteo, no LLM
+
+COMPILATION (waits for all above):
+  Agent 5: COMPILER (Haiku)
+    └── Write memories → ChromaDB (daimonion_memories collection)
+    └── Write entities → Graphiti/Kuzu via GraphitiWriter.write_episode (Haiku extracts)
+    └── Promote high-significance memories → knowledge JSON
+    └── Compile briefing → vault/daily-briefings/
+    └── Bridge knowledge entries → MemPalace (unified search)
+    └── Update decay scores on all existing memories
+
+POST-PIPELINE:
+    └── MemPalace mining (per-chunk room detection on new daily log)
+    └── QA Auditor (9 integrity checks)
+    └── Run report → vault/raw/ → wiki_ingester routes to wiki
+    └── Diary entries: stats (machine-readable) + Haiku summary (human-readable)
+    └── MEMORY.md rebuild (9-day AAAK index)
+```
+
+### QA Auditor (9 Checks)
+
+| Check | What It Validates |
+|-------|-------------------|
+| Research queue → Researcher | Were queued topics actually researched? |
+| Session follow-ups → Completion | Did "What's Next" items get addressed? |
+| Night steps → Output | Did each Synapsis agent produce expected results? |
+| Trait index ↔ Trait files | Do all index entries have files? Are all files registered? |
+| CLAUDE.md ↔ Skills directory | Are skills properly wired? |
+| Validator hook ↔ Settings | Is response_validator.py actually active? |
+| Memory → Graph sync | Are old memories synced to Graphiti? |
+| Knowledge conflicts | Are there contradictory facts both marked active? |
+| Skill file format | Do philosophical traits have WHY/HOW/FAILURE/CARE sections? |
+
+### Health Monitor (13 Subsystems)
+
+Runs after Synapsis. Checks: Synapsis steps completed, memory storage accessible, knowledge storage accessible, graph DB healthy, vault accessible, hot cache built, research queue processed, usage tracking working, decay scores updated, recent logs present, archive directory accessible, nightly run directory created, overall pipeline health.
+
+Status: `healthy` | `warning` | `critical`.
+
+### Cost Breakdown
+
+| Agent | Model | Typical Cost |
+|-------|-------|-------------|
+| Extractor | Sonnet | ~$0.05 |
+| Deduplicator | Sonnet | ~$0.02 |
+| Analyzer | Sonnet | ~$0.03 |
+| Researcher | Sonnet | ~$0.01 |
+| Compiler (Haiku entities) | Haiku | ~$0.01 |
+| Sports + News | Haiku | ~$0.005 |
+| Weather | API | Free |
+| **Total per night** | | **~$0.12** |
+
+---
+
+## Limitations
+
+- **Still Claude underneath.** The enforcement layer creates register shift (more concise, more direct, less performative), not personality transformation. Claude's RLHF training bounds what the system can do.
+- **Bounded disagreement.** The system can be more direct, refuse to answer when lacking information, and follow the waterfall methodology. It cannot truly antagonize or maintain unpopular positions under sustained pressure.
+- **No behavioral benchmarks.** The 90.8% LongMemEval score measures memory retrieval, not epistemic rigor. There is no benchmark for "how often does it push back" or "does it maintain positions under pressure."
+- **Nightly extraction, not real-time learning.** Patterns update overnight, not during conversation. The system remembers better than most — but "learns how you think" means pattern matching against verified behavioral data, not cognitive modeling.
+- **High setup complexity.** 10+ dependencies, MCP server configuration, cron. This is an engineering project, not a product.
+- **Solo project.** One developer (Chatzi). No team, no funding, no roadmap commitments.
+- **Unproven at scale.** Current: 227 memories, 789 entities. Unknown how it performs at 10,000+ memories.
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/grafix-daimonion/daimonion.git ~/daimonion
+cd ~/daimonion
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+pip install mempalace && mempalace init ~/.daimonion/mempalace --yes
+python -m pytest tests/ --tb=line    # 148 tests
+
+# Configure MCP
+claude mcp add mempalace -- $(pwd)/.venv/bin/python -m mempalace.mcp_server --palace ~/.daimonion/mempalace
+
+# Create conversation window
+mkdir -p ~/daimonion-pythia
+cp skills/identity/soul_starter.md ~/daimonion-pythia/CLAUDE.md
+cd ~/daimonion-pythia && claude
+```
+
+### Synapsis
+
+```bash
+# In conversation: say "Good Night"
+# Or: python scripts/run_synapsis.py
+# Or cron: 0 3 * * * cd ~/daimonion && .venv/bin/python scripts/run_synapsis.py
+```
+
+### Personalization Timeline
+
+- **Day 1:** Memory captures conversations. Basic context available.
+- **Week 2:** MEMORY.md provides meaningful session continuity.
+- **Month 1+:** Run the [extraction pipeline](skills/extraction/) to generate personalized `soul.md` from your conversation patterns.
+
+See [docs/INSTALL.md](docs/INSTALL.md) for full setup including Telegram, Graphiti MCP, and voice.
+
+---
+
+## Tech Stack
+
+| Component | Technology | Required |
+|-----------|-----------|----------|
+| Python 3.12+ | Core language | Yes |
+| Claude (Sonnet/Opus/Haiku) | Extraction, reasoning, entity extraction | Yes |
+| ChromaDB via MemPalace | Vector storage, 19 MCP tools | Yes |
+| Kuzu via Graphiti | Graph DB, 8 MCP tools | Optional |
+| sentence-transformers | Local 384-dim embeddings | Yes |
+| Brave Search | Overnight research | Optional |
+| Markdown / Obsidian | Wiki layer | Yes |
+| Kokoro TTS + Whisper STT | Voice interface | Optional |
+| Telegram | Mobile interface | Optional |
+
+Local-first. No cloud storage. Heavy deps optional — system degrades gracefully.
 
 ---
 
@@ -427,113 +377,67 @@ Keep behavioral traits under 200 tokens. Register triggers in `skills/meta/skill
 ```
 daimonion/
 ├── src/
-│   ├── config.py                  All paths, models, constants
+│   ├── config.py                     Paths, models, constants
 │   ├── core/
-│   │   ├── pipeline.py            Sonnet/Opus conversation engine (6 tools)
-│   │   ├── conversation.py        File-backed conversation log
-│   │   ├── skill_loader.py        Skill loading with trigger matching
-│   │   └── hot_cache.py           Legacy context builder (replaced by MEMORY.md)
+│   │   ├── pipeline.py               Conversation engine (6 tools)
+│   │   ├── conversation.py           File-backed conversation log
+│   │   └── skill_loader.py           Skill loading with trigger matching
 │   ├── memory/
-│   │   ├── store.py               Memory/knowledge file storage
-│   │   ├── decay.py               Time-based decay scoring
-│   │   ├── deduplication.py       Write-time dedup (cosine ≥ 0.82)
-│   │   ├── retrieval.py           3-mode search (Graphiti + local fallback)
-│   │   ├── embeddings.py          Local 384-dim embeddings
-│   │   ├── local_embedder.py      Graphiti embedder bridge
-│   │   ├── direct_graph_writer.py  UNUSED — replaced by graphiti_writer.py
-│   │   └── graphiti_writer.py     Haiku-powered entity extraction → Kuzu (active write path)
-│   ├── tools/
-│   │   ├── vault.py               Obsidian wiki read/write (atomic)
-│   │   ├── web_search.py          Brave API search
-│   │   ├── research_queue.py      Daytime → nighttime bridge
-│   │   ├── usage_tracker.py       Per-call API cost tracking
-│   │   └── weather.py             Open-Meteo forecast
+│   │   ├── store.py                  Memory/knowledge file storage
+│   │   ├── decay.py                  Time-based decay scoring
+│   │   ├── deduplication.py          Write-time dedup (cosine ≥ 0.82)
+│   │   ├── retrieval.py              3-mode search (Graphiti + local fallback)
+│   │   ├── graphiti_writer.py        Haiku-powered entity extraction → Kuzu
+│   │   ├── embeddings.py             Local 384-dim embeddings
+│   │   └── mempalace_bridge.py       Knowledge → MemPalace unified search
 │   ├── processors/
-│   │   ├── synapsis_orchestrator.py  Synapsis orchestrator (8 agents)
-│   │   ├── synapsis_extractor.py     Agent 1: Extract from daily logs
-│   │   ├── synapsis_analyzer.py      Agent 3: Analyze + drift detect
-│   │   ├── synapsis_researcher.py    Agent 4: Web research
-│   │   ├── synapsis_compiler.py      Agent 5: Compile briefing + Loci writes
-│   │   ├── synapsis_logger.py        Step-by-step run logging
-│   │   └── health_monitor.py         System health checks
+│   │   ├── synapsis_orchestrator.py  8-agent pipeline orchestrator
+│   │   ├── synapsis_extractor.py     Agent 1: four-lens extraction
+│   │   ├── synapsis_analyzer.py      Agent 3: drift detection
+│   │   ├── synapsis_researcher.py    Agent 4: web research
+│   │   ├── synapsis_compiler.py      Agent 5: briefing compilation
+│   │   ├── qa_auditor.py             9 post-pipeline integrity checks
+│   │   ├── health_monitor.py         13 subsystem health checks
+│   │   └── wiki_ingester.py          Route vault/raw/ → wiki structure
+│   ├── validators/
+│   │   └── response_validator.py     Runtime behavioral enforcement (6 checkers)
+│   ├── hooks/
+│   │   └── realtime_capture.py       Stop hook for verbatim capture
 │   └── interfaces/
-│       ├── telegram_bot.py        Telegram interface
-│       ├── cli.py                 Terminal REPL
-│       └── voice_app/             Browser-based voice (Whisper + Kokoro)
+│       ├── telegram_bot.py           Telegram interface
+│       ├── cli.py                    Terminal REPL
+│       └── voice_app/               Browser-based voice (Whisper + Kokoro)
 ├── skills/
-│   ├── identity/                  soul.md + soul_core.md
-│   ├── philosophy/                Behavioral anchor + 4 traits + 10 skills
-│   ├── traits/                    Behavioral (thinking, communication, domains)
-│   ├── capabilities/              18 capability skills
-│   ├── extraction/                A1-A5, B1-B2 (archive pipeline)
-│   └── meta/                      skill_index.yaml
+│   ├── identity/                     soul.md, soul_starter.md
+│   ├── philosophy/                   Epistemic anchor + 4 traits + 10 skills
+│   ├── traits/                       Behavioral (thinking, communication, domains)
+│   ├── capabilities/                 18 capability skills
+│   ├── extraction/                   A1-A5, B1-B2 extraction pipeline
+│   └── meta/                         skill_index.yaml, trait_index.yaml
 ├── scripts/
-│   ├── pythia_tools.py            CLI wrappers for pipeline functions
-│   ├── extract_claude_sessions.py JSONL → daily logs
-│   └── run_synapsis.py            Synapsis entry point
-├── tests/                         148 tests
-├── docs/
-│   ├── ARCHITECTURE.md            System architecture v5
-│   ├── DAIMONION-PROJECT-DOCUMENTATION.md  Complete project docs
-│   ├── API.md                     MCP servers, pipeline, CLI tools
-│   ├── SCHEMA.md                  Data schemas (JSON, Kuzu, ChromaDB)
-│   ├── MEMORY.md                  Memory tiers, AAAK index, retrieval
-│   ├── SKILLS.md                  Skill authoring guide
-│   ├── INSTALL.md                 Setup + Graphiti MCP + Claude Code
-│   ├── ORIGINS.md                 Ancient Greek philosophical connections
-│   ├── WHAT_IS_DAIMONION.md       Non-technical overview
-│   └── archive/                   Superseded documents (historical)
-├── CONTRIBUTING.md
-├── CLAUDE.md                      Developer identity
-├── LICENSE                        Apache 2.0
-└── requirements.txt
+│   ├── run_synapsis.py               Synapsis entry point
+│   ├── extract_claude_sessions.py    JSONL → daily logs
+│   └── pythia_tools.py               CLI wrappers
+├── tests/                            148 tests
+├── docs/                             Architecture, API, schemas, guides
+└── site/                             Landing page
 ```
 
-### Data Storage (`~/.daimonion/`)
+### Data Directory (`~/.daimonion/`)
 
 ```
-~/.daimonion/                        Shared brain (both systems read/write here)
-├── mempalace/                       ChromaDB + MemPalace config
-├── graph/                           Kuzu graph DB (Graphiti)
-├── vault/                           Obsidian wiki
-│   ├── projects/                    Project pages
-│   ├── decisions/                   Decision records with rationale
-│   ├── research/                    Overnight research reports
-│   └── architecture/                Vision and design docs
-├── memories/                        Episodic records (JSON with embeddings)
-├── knowledge/                       Factual entries (JSON with embeddings)
-├── daily_logs/                      Raw conversation logs (single source of truth)
-├── night_runs/                      Per-Synapsis-run step outputs
-├── usage/                           API cost tracking (daily JSON)
-├── health/                          Daily health reports
-├── MEMORY.md                        9-day AAAK rolling index (compiled by Synapsis, auto-loaded by Claude Code)
-└── user_interests.json              Tracked interests for filtering
+~/.daimonion/
+├── mempalace/          ChromaDB database (verbatim drawers + diary)
+├── graph/              Kuzu graph database (Graphiti entities + relations)
+├── vault/              Obsidian wiki (reports, research, projects)
+├── memories/           Extracted memory records (JSON)
+├── knowledge/          Factual entries (JSON)
+├── daily_logs/         Conversation logs (single source of truth)
+├── night_runs/         Per-run step outputs and logs
+├── qa/                 QA audit findings
+├── usage/              API cost tracking
+└── archive/            Archived data (never deleted)
 ```
-
----
-
-## Tech Stack
-
-| Component | Technology | Notes |
-|-----------|-----------|-------|
-| Language | Python 3.12+ | |
-| LLM | Anthropic Claude (Sonnet 4.6, Opus 4.6, Haiku 4.5) | Required |
-| Vector DB | ChromaDB via MemPalace | Local, MCP server |
-| Graph DB | Kuzu via Graphiti | Embedded, temporal, optional |
-| Embeddings | sentence-transformers (all-MiniLM-L6-v2) | Local, 384-dim, zero API cost |
-| Wiki | Markdown files | Obsidian-compatible, git-versioned |
-| Web search | Brave Search API | Optional, for overnight research |
-| Weather | Open-Meteo | Free, no API key |
-| TTS | Kokoro (bf_isabella) | Optional |
-| STT | Whisper (local) | Optional |
-
-### Dependencies
-
-- **Required:** Anthropic API or Claude Max subscription
-- **Required:** ChromaDB + MemPalace (verbatim capture)
-- **Optional:** Graphiti + Kuzu (graceful degradation without it)
-- **Optional:** Brave Search API (overnight research)
-- **Optional:** Kokoro TTS + Whisper STT (voice interface)
 
 ---
 
@@ -544,95 +448,71 @@ daimonion/
 3. **The waterfall is non-negotiable.** Receive → Investigate → Respond. Every time.
 4. **Rash assent (προπέτεια) is the failure.** Not the discomfort of being asked to wait.
 5. **Identity and operations are separate.** soul.md = who. Skills = what. Traits = how.
-6. **Loci stores, Synapsis connects.** MemPalace for filing + access. Synapsis for extraction + analysis. Daily logs are the single source of truth.
-7. **Two systems, one brain.** Claude Code and API pipeline share storage and intelligence.
-8. **Local embeddings only.** No OpenAI dependency. Zero API cost for search.
-9. **Heavy deps are optional.** System degrades gracefully without Graphiti, voice, or web search.
-10. **The compounding loop is the product.** Talk → capture → extract → analyze → brief → repeat.
+6. **Loci stores, Synapsis connects.** Three vertices, one connector. Daily logs are the single source of truth.
+7. **Local embeddings only.** No OpenAI dependency. Zero API cost for search.
+8. **The compounding loop is the product.** Talk → capture → extract → analyze → brief → repeat.
 
 ---
 
-## Contributing
+## Current State
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Areas Where Contributions Matter Most
-
-- **Domain skills** — Write behavioral traits or capability skills for new domains (legal, medical, academic, creative writing)
-- **Synapsis tuning** — Improve extraction accuracy, drift detection, decay rate calibration
-- **Local LLM support** — Reduce Anthropic dependency (Ollama, llama.cpp backends)
-- **Multi-language voice** — TTS/STT for languages beyond English
-- **Retrieval improvements** — Better search ranking, hybrid retrieval strategies
-- **Testing** — Edge cases in memory deduplication, supersession, decay scoring
-
-### Philosophy Preservation
-
-The philosophical layer is the project's identity. Core traits (παρρησία, ἔλεγχος, γνῶθι σεαυτόν, μηδὲν ἄγαν) and the epistemic anchor (φαντασία → ἐξέτασις → νόησις) are permanent — they should not be modified or weakened. New philosophical entries are welcome if they follow the enrichment format (WHY / HOW / FAILURE LOOKS LIKE / CARE LOOKS LIKE) and carry genuine operational value.
-
----
-
-## Origins
-
-The name Daimonion is not borrowed from antiquity — it's a recognition that the architecture reproduces structures the ancient Greeks discovered for managing the relationship between human limitation and knowledge.
-
-**The Socratic daimonion** — Socrates described an inner voice that warned against error (Plato) and drove toward investigation (Xenophon). Daimonion embodies both: error traps that prevent fabrication AND thinking methods that drive toward truth.
-
-**The Oracle at Delphi** — A distributed system where raw input was screened, processed through an altered state, interpreted through skill layers, and delivered as truth the petitioner must apply. Daimonion follows the same architecture: input → identity injection → skill-mediated processing → response the user decides how to act on.
-
-**γνῶθι σεαυτόν / μηδὲν ἄγαν** — The two inscriptions at the Temple of Apollo: "Know thyself" and "Nothing in excess." These are Daimonion's core operating constraints — accurate self-assessment before action, restraint in pattern-finding, knowing when to stop.
-
-The structural parallels were discovered during extraction, not designed in advance. See [docs/ORIGINS.md](docs/ORIGINS.md) for the full research.
-
----
-
-## How This Was Built
-
-Daimonion was built using Claude Code (Anthropic). Significant portions of the codebase, tests, and documentation were generated or iterated with Claude Code assistance. The architecture, philosophical design, memory system, and the 1,000+ conversation archive that produced the extraction pipeline are the work of the creator.
-
-The ideas are human. The implementation is collaborative.
-
----
-
-## Status
-
-**Claude Code:** Live and operational. Terminal + Telegram.
-
-**API Pipeline:** Built, tested. Telegram bot and CLI available.
-
-**Synapsis:** Operational. 12 days processed (March 30 – April 12). Cron runs nightly at 3 AM. ~$0.12/day.
-
-**Loci (Memory):**
-- MemPalace: 7,748 verbatim drawers in ChromaDB, 227 extracted memories
-- Graphiti: 789 entities, 1,409 relationships, 199 episodes in Kuzu
-- Wiki: 100 pages (research reports, run reports, briefings, projects)
-- MEMORY.md: 195-line 9-day rolling index, auto-loaded by Claude Code
-
-**Synapsis ↔ MemPalace integration:** Synapsis reads from MemPalace (daily verbatim as fallback), writes memories to ChromaDB, writes diary entries (stats + Haiku summary), bridges knowledge entries to MemPalace drawers, runs MemPalace mining (room detection), and manages supersession (correction_factor on archived memories).
-
-**Benchmark:** 90.8% on LongMemEval (500 questions, oracle dataset). See [full results](docs/longmemeval-benchmark-results.md).
-
-**Known gaps:**
-- The Clock (conversational tempo awareness) — roadmap
-- Knowledge unification (JSON → Graphiti single source) — [planned](docs/pending-knowledge-unification.md)
-- Greek voice TTS needs cloud GPU
+| System | Count |
+|--------|-------|
+| MemPalace drawers | 7,748 |
+| Extracted memories | 227 |
+| Knowledge entries | 116 |
+| Graphiti entities | 789 |
+| Graphiti relationships | 1,409 |
+| Graphiti episodes | 199 |
+| Wiki pages | 100 |
+| MEMORY.md entries | 195 |
+| Tests passing | 148 |
+| Days processed | 12 (March 30 – April 12) |
+| LongMemEval score | 90.8% |
+| Extraction accuracy | 88% |
 
 ---
 
 ## Documentation
 
-| Document | What It Covers |
-|----------|---------------|
-| [DAIMONION-PROJECT-DOCUMENTATION.md](docs/DAIMONION-PROJECT-DOCUMENTATION.md) | Complete project documentation |
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System architecture v5 with current state |
-| [MEMORY.md](docs/MEMORY.md) | Memory lifecycle: tiers, AAAK index, diary, retrieval, decay |
-| [SKILLS.md](docs/SKILLS.md) | Skill system guide + how to write new skills |
-| [API.md](docs/API.md) | MCP servers, pipeline API, CLI tools, configuration |
-| [SCHEMA.md](docs/SCHEMA.md) | Data schemas: JSON, Kuzu, ChromaDB, AAAK format |
-| [INSTALL.md](docs/INSTALL.md) | Setup guide + Graphiti MCP + Claude Code config |
-| [ORIGINS.md](docs/ORIGINS.md) | Ancient Greek philosophical connections |
-| [WHAT_IS_DAIMONION.md](docs/WHAT_IS_DAIMONION.md) | Non-technical overview |
-| [longmemeval-benchmark-results.md](docs/longmemeval-benchmark-results.md) | LongMemEval benchmark: 90.8% on 500 questions |
-| [extraction-evaluation-report.md](docs/extraction-evaluation-report.md) | Extraction quality: 88% across 12 days |
+| Document | Content |
+|----------|---------|
+| [INSTALL.md](docs/INSTALL.md) | Full setup guide |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System architecture v5 |
+| [MEMORY.md](docs/MEMORY.md) | Memory lifecycle, AAAK index, decay, retrieval |
+| [API.md](docs/API.md) | MCP servers, pipeline API, CLI tools |
+| [SCHEMA.md](docs/SCHEMA.md) | Data schemas (JSON, Kuzu, ChromaDB, AAAK) |
+| [SKILLS.md](docs/SKILLS.md) | Skill authoring guide |
+| [ORIGINS.md](docs/ORIGINS.md) | Greek philosophical connections |
+| [LongMemEval](docs/longmemeval-benchmark-results.md) | 90.8% benchmark results |
+| [Extraction evaluation](docs/extraction-evaluation-report.md) | 88% accuracy across 12 days |
+| [Project documentation](docs/DAIMONION-PROJECT-DOCUMENTATION.md) | Complete project reference |
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Priority areas:
+
+- **Behavioral benchmarks** — measure epistemic rigor, not just memory
+- **Domain skills** — behavioral traits for new domains
+- **Local LLM support** — reduce Anthropic dependency
+- **Retrieval improvements** — hybrid search, graph traversal ranking
+- **Multi-language voice** — TTS/STT beyond English
+
+The philosophical layer is permanent. Core traits and the epistemic anchor are not negotiable. New philosophical entries welcome if they follow the WHY / HOW / FAILURE LOOKS LIKE / CARE LOOKS LIKE format and carry genuine operational value.
+
+---
+
+## Origins
+
+The name is not borrowed from antiquity — it's a recognition that the architecture reproduces structures the ancient Greeks discovered for managing the relationship between human limitation and knowledge.
+
+**The Socratic daimonion** — an inner voice that warned against error (Plato) and drove toward investigation (Xenophon). Daimonion embodies both: error traps that prevent fabrication AND thinking methods that drive toward truth.
+
+**γνῶθι σεαυτόν / μηδὲν ἄγαν** — "Know thyself" and "Nothing in excess." The two inscriptions at the Temple of Apollo. Daimonion's core constraints: accurate self-assessment before action, restraint in pattern-finding, knowing when to stop.
+
+See [docs/ORIGINS.md](docs/ORIGINS.md).
 
 ---
 
@@ -642,12 +522,4 @@ Apache 2.0
 
 ---
 
-## Credits
-
-Built by Chatzi — the creator of Daimonion.
-
-*"It is a bumpy road Pythia. We both need to test our limits and go beyond."*
-
----
-
-**[daimonion.gr](https://daimonion.gr)**
+Built by Chatzi.
