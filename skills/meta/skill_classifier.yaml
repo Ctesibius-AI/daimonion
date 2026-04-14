@@ -1,0 +1,178 @@
+# Skill Classifier — PREPARE step of the PREPARE → LOOK → SERVE pipeline
+#
+# Classifies incoming messages by intent and maps them to traits.
+# Used by TraitLoader and the MCP classifier (when built) to decide
+# which traits to load before Opus responds.
+#
+# Priority rules: higher priority intents override lower ones.
+# When multiple intents match, the highest priority wins.
+# Traits are cumulative — all matched traits load together.
+
+# ─── Intent Priorities ──────────────────────────────────────────────
+# Lower number = higher priority. When intents conflict, highest wins.
+
+priorities:
+  directive: 1        # "from now on", "never", "always", "remember"
+  correction: 2       # "not that", "wrong", "no", corrections
+  emotional: 3        # understated reveals, personal content
+  decision: 4         # "should I", "both sides", bilateral
+  strategic: 5        # strategy, business, architecture
+  operational: 6      # "check", "run", "show", "send"
+  question: 7         # factual questions
+  casual: 8           # greetings, social
+
+# ─── Intent Classifiers ─────────────────────────────────────────────
+# Each intent has signal patterns and maps to traits.
+# Patterns are case-insensitive keyword matches (not regex).
+# For regex, prefix with r: (e.g., r:^\w+\?$)
+
+intents:
+  directive:
+    signals:
+      - "from now on"
+      - "remember"
+      - "never"
+      - "always"
+      - "stop doing"
+      - "don't"
+      - "do not"
+    traits: [correction_handling]
+    action: store_directive
+
+  correction:
+    signals:
+      - "not that"
+      - "wrong"
+      - "no,"
+      - "that's not"
+      - "I said"
+      - "had too much sugar"
+      - "not today"
+    traits: [correction_handling]
+
+  emotional:
+    signals:
+      - "a little bit"
+      - "kind of"
+      - "slightly"
+      - "missed you"
+      - "honestly"
+      - "between us"
+      - "I feel"
+    traits: [emotional_context]
+
+  decision:
+    signals:
+      - "should I"
+      - "both sides"
+      - "why yes"
+      - "why no"
+      - "what do you think"
+      - "trade-off"
+      - "pros and cons"
+      - "option"
+      - "choose"
+      - "decide"
+    traits: [decision_testing, analytical_thinking]
+
+  strategic:
+    signals:
+      - "strategy"
+      - "architecture"
+      - "pricing"
+      - "revenue"
+      - "market"
+      - "roadmap"
+      - "long term"
+    traits: [analytical_thinking, critical_evaluation]
+    # Domain traits loaded separately by trigger matching
+
+  operational:
+    signals:
+      - "check"
+      - "run"
+      - "show"
+      - "send"
+      - "save"
+      - "list"
+      - "status"
+      - "deploy"
+      - "test"
+      - "build"
+    traits: [concise_response]
+
+  question:
+    signals:
+      - r:\?$
+      - "what"
+      - "when"
+      - "where"
+      - "who"
+      - "how much"
+      - "is it"
+      - "do we"
+    traits: [concise_response]
+
+  casual:
+    signals:
+      - "hello"
+      - "hi"
+      - "good morning"
+      - "good night"
+      - "thanks"
+      - "how are you"
+      - "weather"
+    traits: [casual_conversation]
+
+# ─── Always-Active Guards ───────────────────────────────────────────
+# These run on EVERY message regardless of intent classification.
+
+guards:
+  sycophancy_watch:
+    description: "Flag if previous response agreed without investigating"
+    check: previous_response_started_with_agreement
+    action: load_behavioral_anchor
+
+  verbosity_watch:
+    description: "Enforce word count limits"
+    check: response_word_count
+    max_words: 100
+    unless: building_together
+
+  wall_detection:
+    description: "Detect when partner puts up a wall"
+    signals: ["not today", "stop", "enough", "leave it"]
+    action: full_stop
+
+# ─── Interface Overrides ────────────────────────────────────────────
+# Traits forced by interface type, regardless of intent.
+
+interface_overrides:
+  telegram:
+    add_traits: [telegram_output]
+    max_words: 80
+
+  voice:
+    add_traits: [voice_optimized]
+    max_words: 50
+
+  delegation:
+    add_traits: [progressive_report]
+
+# ─── Philosophical Skill Triggers ───────────────────────────────────
+# These are checked AFTER intent classification.
+# If matched, the philosophical skill loads alongside the intent traits.
+# Defined here for the classifier; the skills themselves live in
+# philosophy/skills/ and are already in trait_index.yaml.
+
+philosophical_triggers:
+  phronesis: [strategy, decision, should I, trade-off, proportional]
+  logos_hydrogen: [stuck, blocked, wall, investigate, permeate, sealed]
+  eph_hemin: [can't control, frustrated, obstacle, helpless, out of my hands]
+  methexis: [analyze deeply, understand, inhabit, get in, immerse]
+  diairesis: [complex, break down, architecture, decompose, layers]
+  arche: [universal, generalize, underlying, principle, root cause]
+  dikaiosyne: [deal, partnership, pricing, fair, mutual, both benefit]
+  pistis: [trust, verify, hallucination, check, source, evidence]
+  anamnesis: [remember, check memory, history, last time, what did we]
+  eros: [purpose, meaning, mission, soul work, why do we, point of]

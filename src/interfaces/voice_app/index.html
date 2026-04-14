@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Pythia</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #header {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #555;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  #conversation {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .message {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .user {
+    align-self: flex-end;
+    background: #1a3a5c;
+    color: #c8ddf0;
+    border-bottom-right-radius: 4px;
+  }
+
+  .assistant {
+    align-self: flex-start;
+    background: #1a1a2e;
+    color: #d0d0e0;
+    border-bottom-left-radius: 4px;
+  }
+
+  .meta {
+    font-size: 11px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  #controls {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+  }
+
+  #mic-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    background: #111;
+    color: #888;
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #mic-btn:hover { border-color: #555; color: #aaa; }
+  #mic-btn.recording {
+    background: #3a1a1a;
+    border-color: #c44;
+    color: #f66;
+    animation: pulse 1.5s infinite;
+  }
+  #mic-btn.processing {
+    background: #1a2a3a;
+    border-color: #48c;
+    color: #6af;
+    cursor: wait;
+  }
+
+  #status {
+    font-size: 12px;
+    color: #444;
+    text-align: center;
+    padding-bottom: 10px;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+</style>
+</head>
+<body>
+
+<div id="header">Pythia</div>
+
+<div id="conversation"></div>
+
+<div id="controls">
+  <button id="mic-btn" onclick="toggleRecording()">&#x1F3A4;</button>
+</div>
+
+<div id="status">tap to speak</div>
+
+<script>
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+
+const btn = document.getElementById('mic-btn');
+const status = document.getElementById('status');
+const conv = document.getElementById('conversation');
+
+async function toggleRecording() {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        channelCount: 1,
+        sampleRate: 16000,
+        echoCancellation: true,
+        noiseSuppression: true,
+      }
+    });
+
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      await processAudio(blob);
+    };
+
+    mediaRecorder.start(100);
+    isRecording = true;
+    btn.classList.add('recording');
+    status.textContent = 'listening...';
+  } catch (err) {
+    status.textContent = 'mic access denied';
+    console.error(err);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  isRecording = false;
+  btn.classList.remove('recording');
+  btn.classList.add('processing');
+  status.textContent = 'thinking...';
+}
+
+async function processAudio(blob) {
+  try {
+    // Step 1: Transcribe
+    status.textContent = 'transcribing...';
+    const formData = new FormData();
+    formData.append('audio', blob, 'audio.webm');
+
+    const transRes = await fetch('/transcribe', { method: 'POST', body: formData });
+    const transData = await transRes.json();
+
+    if (!transData.text) {
+      status.textContent = 'no speech detected';
+      btn.classList.remove('processing');
+      return;
+    }
+
+    // Show user message
+    addMessage(transData.text, 'user', `${transData.language} | ${transData.elapsed_ms}ms`);
+
+    // Step 2: Get response
+    status.textContent = 'thinking...';
+    const respRes = await fetch('/respond', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: transData.text }),
+    });
+    const respData = await respRes.json();
+
+    if (respData.response) {
+      const meta = [respData.model, `${respData.elapsed_ms}ms`];
+      if (respData.tools && respData.tools.length) meta.push(respData.tools.join(', '));
+      addMessage(respData.response, 'assistant', meta.join(' | '));
+
+      // Play audio if available
+      if (respData.audio) {
+        playAudio(respData.audio);
+      }
+    }
+
+  } catch (err) {
+    status.textContent = 'error: ' + err.message;
+    console.error(err);
+  }
+
+  btn.classList.remove('processing');
+  status.textContent = 'tap to speak';
+}
+
+function addMessage(text, role, meta) {
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  div.innerHTML = text.replace(/\n/g, '<br>');
+  if (meta) {
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'meta';
+    metaDiv.textContent = meta;
+    div.appendChild(metaDiv);
+  }
+  conv.appendChild(div);
+  conv.scrollTop = conv.scrollHeight;
+}
+
+function playAudio(base64) {
+  const audio = new Audio('data:audio/wav;base64,' + base64);
+  audio.play().catch(e => console.log('autoplay blocked:', e));
+}
+
+// Spacebar to toggle recording
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && e.target === document.body) {
+    e.preventDefault();
+    toggleRecording();
+  }
+});
+</script>
+
+</body>
+</html>

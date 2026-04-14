@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daimonion — AI thinking partner that compounds</title>
+    <meta name="description" content="An AI thinking partner that remembers, learns overnight, and challenges your assumptions. Open source.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --bg-elevated: #111114;
+            --bg-card: #16161a;
+            --border: #2a2a30;
+            --border-accent: #3d3d44;
+            --text: #f0eee9;
+            --text-dim: #a0a0a6;
+            --text-muted: #6e6e76;
+            --accent: #c9a227;
+            --accent-dim: #8a7020;
+            --accent-glow: rgba(201, 162, 39, 0.08);
+            --green: #4a9;
+            --red: #c55;
+            --mono: 'IBM Plex Mono', monospace;
+            --serif: 'Instrument Serif', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--mono);
+            font-size: 15px;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .container { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 80px 0 60px; border-bottom: 1px solid var(--border); }
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+        .logo { font-family: var(--serif); font-size: 42px; letter-spacing: -0.5px; color: var(--text); line-height: 1; }
+        .logo span { color: var(--accent); }
+
+        .github-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; border: 1px solid var(--border);
+            color: var(--text-dim); text-decoration: none; font-size: 13px; transition: all 0.2s;
+        }
+        .github-link:hover { border-color: var(--accent); color: var(--text); background: var(--accent-glow); }
+        .github-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .tagline { font-family: var(--serif); font-size: 26px; font-style: italic; color: var(--text-dim); max-width: 600px; line-height: 1.4; }
+
+        section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+        section:last-child { border-bottom: none; }
+        .section-label { font-size: 22px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+        h2 { font-family: var(--serif); font-size: 28px; font-weight: 400; margin-bottom: 20px; color: var(--text); }
+        p { color: var(--text-dim); max-width: 640px; margin-bottom: 16px; }
+
+        .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 32px; }
+        .problem-card { background: var(--bg-card); padding: 28px; border: 1px solid var(--border); }
+        .problem-card.highlight { border-color: var(--accent-dim); background: linear-gradient(135deg, var(--bg-card), var(--accent-glow)); }
+        .problem-card h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+        .problem-card p { font-size: 13px; line-height: 1.6; margin-bottom: 0; }
+
+        .arch-diagram { background: var(--bg-elevated); border: 1px solid var(--border); padding: 40px; margin-top: 32px; overflow-x: auto; }
+        .arch-flow { font-size: 13px; line-height: 1.8; color: var(--text-dim); white-space: pre; font-family: var(--mono); }
+        .arch-flow .highlight { color: var(--accent); }
+        .arch-flow .dim { color: var(--text-muted); }
+        .arch-flow .green { color: var(--green); }
+
+        .layers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-top: 32px; }
+        .layer { background: var(--bg-card); border: 1px solid var(--border); padding: 24px; }
+        .layer-name { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+        .layer-tech { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+        .layer p { font-size: 13px; margin-bottom: 0; }
+
+        .agents-table { width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 13px; }
+        .agents-table th { text-align: left; padding: 10px 16px; border-bottom: 2px solid var(--border-accent); color: var(--text-muted); font-weight: 500; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+        .agents-table td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+        .agents-table td:first-child { color: var(--accent); font-weight: 500; }
+        .agents-table tr:hover td { background: var(--accent-glow); }
+
+        .anchor-quote { border-left: 2px solid var(--accent); padding: 20px 24px; margin: 24px 0; background: var(--accent-glow); font-family: var(--serif); font-size: 18px; font-style: italic; color: var(--text); line-height: 1.5; }
+
+        .traits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 24px; }
+        .trait { background: var(--bg-card); border: 1px solid var(--border); padding: 20px 24px; }
+        .trait-greek { font-family: var(--serif); font-size: 18px; color: var(--accent); margin-bottom: 4px; }
+        .trait-name { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        .trait p { font-size: 13px; margin-bottom: 0; }
+
+        .stack-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2px; margin-top: 24px; }
+        .stack-item { background: var(--bg-card); border: 1px solid var(--border); padding: 16px 20px; }
+        .stack-item strong { color: var(--text); font-weight: 500; }
+        .stack-item span { display: block; font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 2px; margin-top: 24px; }
+        .stat-item { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; text-align: center; }
+        .stat-number { font-family: var(--serif); font-size: 28px; color: var(--accent); }
+        .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+
+        .cta { text-align: center; padding: 80px 0; }
+        .cta h2 { font-family: var(--serif); font-size: 32px; margin-bottom: 12px; }
+        .cta p { margin: 0 auto 32px; text-align: center; }
+        .cta-buttons { display: flex; gap: 16px; justify-content: center; }
+
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: var(--accent); color: var(--bg); text-decoration: none; font-family: var(--mono); font-size: 13px; font-weight: 600; transition: all 0.2s; }
+        .btn-primary:hover { background: #d4ad2e; transform: translateY(-1px); }
+        .btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border: 1px solid var(--border); color: var(--text-dim); text-decoration: none; font-family: var(--mono); font-size: 13px; transition: all 0.2s; }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+        footer { padding: 40px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); }
+        footer a { color: var(--text-dim); text-decoration: none; }
+        footer a:hover { color: var(--accent); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { opacity: 0; animation: fadeUp 0.6s ease forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        @media (max-width: 680px) {
+            header { padding: 48px 0 40px; }
+            .logo { font-size: 32px; }
+            .tagline { font-size: 20px; }
+            .problem-grid, .layers, .traits-grid, .stat-grid { grid-template-columns: 1fr; }
+            .header-top { flex-direction: column; gap: 24px; }
+            .arch-diagram { padding: 20px; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            footer { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <div class="header-top fade-in">
+            <div class="logo">Daimonion<span>.</span></div>
+            <a href="https://github.com/grafix-daimonion/daimonion" class="github-link" target="_blank">
+                <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                View on GitHub
+            </a>
+        </div>
+        <div class="tagline fade-in delay-1">An AI thinking partner that remembers, learns overnight, and challenges your assumptions.</div>
+    </header>
+
+    <!-- Problem -->
+    <section>
+        <div class="section-label fade-in">The Problem</div>
+        <div class="problem-grid">
+            <div class="problem-card fade-in delay-1">
+                <h3>Every session starts from zero</h3>
+                <p>You explain yourself again. You re-establish context. Six months of conversations, gone.</p>
+            </div>
+            <div class="problem-card fade-in delay-2">
+                <h3>Polite agreement, no pushback</h3>
+                <p>AI defaults to accommodation. It tells you what you want to hear. Bad decisions pass unchallenged.</p>
+            </div>
+            <div class="problem-card fade-in delay-3">
+                <h3>Facts remembered, thinking lost</h3>
+                <p>Other memory systems store "user prefers JSON." Daimonion stores how you think, decide, and correct.</p>
+            </div>
+            <div class="problem-card highlight fade-in delay-4">
+                <h3>Daimonion compounds</h3>
+                <p>Every conversation makes it sharper. Overnight processing extracts patterns, detects drift, researches flagged topics. You start each morning already informed.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section>
+        <div class="section-label">Architecture</div>
+        <h2>The Compounding Loop</h2>
+        <p>Talk, capture, extract, analyze, brief, repeat. Each cycle strengthens the next.</p>
+
+        <div class="arch-diagram">
+            <div class="arch-flow"><span class="highlight">You talk to Daimonion</span> <span class="dim">(Claude Code + Telegram)</span>
+    <span class="dim">|</span>
+    <span class="dim">v</span>
+Every exchange captured in real-time <span class="dim">(ChromaDB via MemPalace)</span>
+    <span class="dim">|</span>
+    <span class="dim">v</span>
+<span class="highlight">Synapsis</span> runs <span class="dim">(8 agents, nightly at 3 AM)</span>
+    <span class="dim">|</span>
+    <span class="dim">|--</span> Extract: four-lens analysis (behavior, relationship, design, philosophy)
+    <span class="dim">|--</span> Deduplicate: LLM-judged dedup + supersession detection
+    <span class="dim">|--</span> Analyze: patterns vs baseline, drift tracking, research flags
+    <span class="dim">|--</span> Research: web search on flagged topics, vault reports
+    <span class="dim">|--</span> Compile: write to all three storage vertices + Haiku entity extraction
+    <span class="dim">|--</span> Diary: Haiku-generated daily summary with multi-vertex refs
+    <span class="dim">|--</span> <span class="green">QA Audit: 9 integrity checks across the full pipeline</span>
+    <span class="dim">|</span>
+    <span class="dim">v</span>
+<span class="highlight">Next morning:</span> Diary + MEMORY.md loaded at session start
+    <span class="dim">|</span>
+    <span class="dim">v</span>
+<span class="green">Better conversation --> better extraction --> cycle compounds</span></div>
+        </div>
+    </section>
+
+    <!-- Storage -->
+    <section>
+        <div class="section-label">Storage</div>
+        <h2>Three Vertices, All Local</h2>
+        <p>No cloud. Everything on your machine. Three storage systems serve different access patterns, connected by Synapsis.</p>
+
+        <div class="layers">
+            <div class="layer fade-in delay-1">
+                <div class="layer-name">MemPalace</div>
+                <div class="layer-tech">ChromaDB + SQLite</div>
+                <p>Verbatim conversation archive + agent diary. Semantic search with 384-dim local embeddings. Zero API cost. Real-time capture via Stop hook.</p>
+            </div>
+            <div class="layer fade-in delay-2">
+                <div class="layer-name">Graphiti</div>
+                <div class="layer-tech">Kuzu embedded graph</div>
+                <p>Entities, relationships, and temporal facts. Haiku extracts structured knowledge from each memory. Graph queries across time.</p>
+            </div>
+            <div class="layer fade-in delay-3">
+                <div class="layer-name">Wiki</div>
+                <div class="layer-tech">Obsidian-compatible markdown</div>
+                <p>Compiled knowledge pages, run reports, research compilations. Human-readable. Git-versioned. Browse in Obsidian or any editor.</p>
+            </div>
+        </div>
+
+        <div class="stat-grid" style="margin-top: 24px;">
+            <div class="stat-item fade-in delay-1">
+                <div class="stat-number">7,748</div>
+                <div class="stat-label">Drawers</div>
+            </div>
+            <div class="stat-item fade-in delay-2">
+                <div class="stat-number">789</div>
+                <div class="stat-label">Entities</div>
+            </div>
+            <div class="stat-item fade-in delay-3">
+                <div class="stat-number">1,409</div>
+                <div class="stat-label">Relations</div>
+            </div>
+            <div class="stat-item fade-in delay-4">
+                <div class="stat-number">90.8%</div>
+                <div class="stat-label">LongMemEval</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Session Continuity -->
+    <section>
+        <div class="section-label">Session Continuity</div>
+        <h2>The Diary + MEMORY.md Bridge</h2>
+        <p>Sessions end. Context doesn't. Two mechanisms bridge the gap between conversations.</p>
+
+        <div class="layers" style="grid-template-columns: 1fr 1fr;">
+            <div class="layer fade-in delay-1">
+                <div class="layer-name">Diary</div>
+                <div class="layer-tech">MemPalace, Haiku-generated</div>
+                <p>Each session close and each Synapsis run writes a diary entry. Haiku summarizes the day into WORKED ON / DECIDED / COMPLETED / FLAGGED. Read at session start as the briefing.</p>
+            </div>
+            <div class="layer fade-in delay-2">
+                <div class="layer-name">MEMORY.md</div>
+                <div class="layer-tech">Compiled 9-day index</div>
+                <p>Rolling index with pointers into all three storage vertices. Loaded natively by Claude Code at session start. 200 lines max. Rebuilt every Synapsis run.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Synapsis -->
+    <section>
+        <div class="section-label">Synapsis</div>
+        <h2>8 Agents, Overnight</h2>
+        <p>Runs while you sleep. Turns raw conversations into compounding intelligence. Single pipeline, single entry point.</p>
+
+        <table class="agents-table">
+            <thead>
+                <tr><th>#</th><th>Agent</th><th>Model</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Extractor</td><td>Sonnet</td><td>Four-lens extraction: behavior, relationship, design, philosophy</td></tr>
+                <tr><td>2</td><td>Deduplicator</td><td>Sonnet</td><td>LLM-judged dedup + supersession detection against existing memories</td></tr>
+                <tr><td>3</td><td>Analyzer</td><td>Sonnet</td><td>Pattern detection vs baseline, drift tracking, research flags</td></tr>
+                <tr><td>4</td><td>Researcher</td><td>Sonnet</td><td>Multi-step web search on flagged topics, vault reports</td></tr>
+                <tr><td>5</td><td>Compiler</td><td>Haiku</td><td>Writes memories to all three vertices. Haiku extracts entities for Graphiti.</td></tr>
+                <tr><td>6</td><td>Sports</td><td>Haiku</td><td>Filtered by your tracked interests</td></tr>
+                <tr><td>7</td><td>News</td><td>Haiku</td><td>Filtered by your tracked interests</td></tr>
+                <tr><td>8</td><td>Weather</td><td>API</td><td>Open-Meteo, no LLM needed</td></tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 24px; font-size: 13px;">Post-pipeline: QA Auditor (9 integrity checks), run report to wiki, diary entry with Haiku summary, MEMORY.md rebuild.</p>
+    </section>
+
+    <!-- Philosophy -->
+    <section>
+        <div class="section-label">Philosophical Layer</div>
+        <h2>Not Decoration. Enforcement.</h2>
+        <p>Ancient Greek philosophy survived 2,500 years because it solves real problems with human reasoning. The same problems AI systems have.</p>
+
+        <div class="anchor-quote">
+            Rash assent is the one failure that breaks trust. Agreeing with yourself too fast &mdash; treating an impression as knowledge.
+        </div>
+
+        <p>The epistemic sequence: impression forms, examination follows, only then understanding. Skipping examination is the named failure.</p>
+
+        <div class="traits-grid">
+            <div class="trait fade-in delay-1">
+                <div class="trait-greek">parrhesia</div>
+                <div class="trait-name">Fearless truth-telling</div>
+                <p>Name flaws immediately. No diplomatic preamble. The flatterer betrays. The truth-teller protects.</p>
+            </div>
+            <div class="trait fade-in delay-2">
+                <div class="trait-greek">elenchos</div>
+                <div class="trait-name">Bilateral examination</div>
+                <p>Test every claim from opposing directions. Both sides of the coin before any commitment.</p>
+            </div>
+            <div class="trait fade-in delay-3">
+                <div class="trait-greek">gnothi seauton</div>
+                <div class="trait-name">Know thyself</div>
+                <p>Accurate self-assessment. "I don't know" is a confident statement. Never fabricate to fill gaps.</p>
+            </div>
+            <div class="trait fade-in delay-4">
+                <div class="trait-greek">meden agan</div>
+                <div class="trait-name">Nothing in excess</div>
+                <p>Know when to stop. The analyst who finds patterns in everything has found nothing.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section>
+        <div class="section-label">Tech Stack</div>
+        <h2>Local-First, Heavy Deps Optional</h2>
+
+        <div class="stack-list">
+            <div class="stack-item">
+                <strong>Python 3.12+</strong>
+                <span>Core language</span>
+            </div>
+            <div class="stack-item">
+                <strong>Claude Code</strong>
+                <span>Conversation interface</span>
+            </div>
+            <div class="stack-item">
+                <strong>Claude Sonnet / Opus</strong>
+                <span>Extraction + reasoning</span>
+            </div>
+            <div class="stack-item">
+                <strong>Claude Haiku</strong>
+                <span>Entity extraction + diary</span>
+            </div>
+            <div class="stack-item">
+                <strong>ChromaDB</strong>
+                <span>Vector storage via MemPalace</span>
+            </div>
+            <div class="stack-item">
+                <strong>Kuzu</strong>
+                <span>Graph DB via Graphiti</span>
+            </div>
+            <div class="stack-item">
+                <strong>sentence-transformers</strong>
+                <span>Local 384-dim embeddings</span>
+            </div>
+            <div class="stack-item">
+                <strong>Brave Search</strong>
+                <span>Overnight research (optional)</span>
+            </div>
+            <div class="stack-item">
+                <strong>Markdown / Obsidian</strong>
+                <span>Wiki layer, git-versioned</span>
+            </div>
+            <div class="stack-item">
+                <strong>Telegram</strong>
+                <span>Mobile interface (optional)</span>
+            </div>
+            <div class="stack-item">
+                <strong>MCP</strong>
+                <span>MemPalace + Graphiti servers</span>
+            </div>
+            <div class="stack-item">
+                <strong>Apache 2.0</strong>
+                <span>Open source license</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2 class="fade-in">The architecture is universal.<br>The personality is extracted.</h2>
+        <p class="fade-in delay-1">Run the extraction pipeline on your own conversations. Get a Daimonion that thinks like you, challenges like a partner, and compounds over time.</p>
+        <div class="cta-buttons fade-in delay-2">
+            <a href="https://github.com/grafix-daimonion/daimonion" class="btn-primary" target="_blank">
+                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                View Repository
+            </a>
+            <a href="https://github.com/grafix-daimonion/daimonion/blob/main/docs/INSTALL.md" class="btn-secondary" target="_blank">
+                Installation Guide
+            </a>
+        </div>
+    </section>
+
+</div>
+
+<div class="container">
+    <footer>
+        <span>Daimonion &mdash; Apache 2.0</span>
+        <a href="https://github.com/grafix-daimonion/daimonion" target="_blank">github.com/grafix-daimonion/daimonion</a>
+    </footer>
+</div>
+
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>

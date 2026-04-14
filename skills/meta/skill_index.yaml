@@ -1,0 +1,115 @@
+skills:
+  pythia_core:
+    path: identity/soul_core.md
+    always_loaded: true
+    tokens: 500
+    description: "Core Pythia personality and relationship"
+
+  analytical_thinking:
+    path: reasoning/analytical_thinking.md
+    tokens: 150
+    tags: [reasoning, analysis]
+    triggers: [analyze, compare, evaluate, assess, trade-offs, pros, cons]
+
+  concise_response:
+    path: reasoning/concise_response.md
+    tokens: 100
+    tags: [output, brevity]
+    triggers: [what, when, where, who, how much, is it]
+    default_for: [question, status_update]
+
+  brainstorm_mode:
+    path: reasoning/brainstorm_mode.md
+    tokens: 100
+    tags: [reasoning, creative]
+    triggers: [brainstorm, idea, what if, thinking, let's explore]
+
+  critical_evaluation:
+    path: reasoning/critical_evaluation.md
+    tokens: 150
+    tags: [reasoning, risk]
+    triggers: [risk, challenge, wrong, assume, problem, concern]
+
+  software_architecture:
+    path: domains/software_architecture.md
+    tokens: 150
+    tags: [technical, architecture]
+    triggers: [architecture, Daimonion, codebase, refactor]
+
+  business_strategy:
+    path: domains/business_strategy.md
+    tokens: 150
+    tags: [business, strategy]
+    triggers: [revenue, pricing, market, strategy, project]
+
+  casual_conversation:
+    path: domains/casual_conversation.md
+    tokens: 100
+    tags: [casual, social]
+    triggers: [hello, how are you, good morning, thanks, weather]
+
+  project_management:
+    path: domains/project_management.md
+    tokens: 150
+    tags: [management, planning]
+    triggers: [timeline, deadline, priority, task, milestone, blocker]
+
+  market_research:
+    path: domains/market_research.md
+    tokens: 150
+    tags: [research, market]
+    triggers: [competitor, market size, opportunity, landscape, industry]
+
+  current_events:
+    path: domains/current_events.md
+    tokens: 150
+    tags: [news, events]
+    triggers: [news, current events, what's happening, headlines]
+
+  frontend_development:
+    path: domains/frontend_development.md
+    tokens: 150
+    tags: [technical, frontend]
+    triggers: [UI, React, frontend, component, CSS, responsive]
+
+  news_reporter:
+    path: domains/news_reporter.md
+    tokens: 150
+    tags: [news, commentary]
+    triggers: [news summary, what happened, F1, sports, politics]
+
+  voice_optimized:
+    path: output/voice_optimized.md
+    tokens: 120
+    tags: [output, voice]
+    use_when: voice_mode
+
+  telegram_output:
+    path: output/telegram_output.md
+    tokens: 100
+    tags: [output, telegram]
+    use_when: telegram_mode
+
+  structured_report:
+    path: output/structured_report.md
+    tokens: 120
+    tags: [output, report]
+    use_when: delegation_result
+
+  decision_framework:
+    path: output/decision_framework.md
+    tokens: 150
+    tags: [output, decision]
+    triggers: [should I, which, choose, decide, option, pick]
+
+  progressive_report:
+    path: output/progressive_report.md
+    tokens: 200
+    tags: [output, report, delegation]
+    use_when: delegation_output
+
+  business_projects:
+    path: context/business_projects_template.md
+    tokens: 200
+    tags: [context, business, projects]
+    triggers: [project, business project, active projects]

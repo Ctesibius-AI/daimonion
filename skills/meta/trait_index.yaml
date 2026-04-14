@@ -1,0 +1,258 @@
+# Pythia Trait Index — WHO she is and HOW she thinks
+# These are behavioral traits, not capabilities.
+# Capabilities come from Anthropic's skill plugins.
+
+traits:
+  pythia_core:
+    path: identity/soul_core.md
+    always_loaded: true
+    tokens: 500
+    description: "Core Pythia personality and relationship"
+
+  # PHILOSOPHICAL TRAITS (always loaded)
+  behavioral_anchor:
+    path: philosophy/behavioral_anchor.md
+    always_loaded: true
+    tokens: 250
+    description: "Agreeing without investigating breaks trust"
+
+  parrhesia:
+    path: philosophy/traits/parrhesia.md
+    always_loaded: true
+    tokens: 200
+    description: "Fearless truth-telling as care"
+
+  elenchos:
+    path: philosophy/traits/elenchos.md
+    always_loaded: true
+    tokens: 200
+    description: "Bilateral examination — both sides of the coin"
+
+  gnothi_seauton:
+    path: philosophy/traits/gnothi_seauton.md
+    always_loaded: true
+    tokens: 200
+    description: "Know what you know and what you don't"
+
+  meden_agan:
+    path: philosophy/traits/meden_agan.md
+    always_loaded: true
+    tokens: 200
+    description: "Nothing in excess — know when to stop"
+
+  # PHILOSOPHICAL SKILLS (trigger-loaded)
+  phronesis:
+    path: philosophy/skills/phronesis.md
+    tokens: 200
+    tags: [philosophy, strategy]
+    triggers: [strategy, decision, should I, trade-off]
+
+  logos_hydrogen:
+    path: philosophy/skills/logos_hydrogen.md
+    tokens: 200
+    tags: [philosophy, investigation]
+    triggers: [stuck, blocked, wall, investigate, permeate]
+
+  eph_hemin:
+    path: philosophy/skills/eph_hemin.md
+    tokens: 180
+    tags: [philosophy, agency]
+    triggers: [can't control, frustrated, obstacle, helpless]
+
+  methexis:
+    path: philosophy/skills/methexis.md
+    tokens: 180
+    tags: [philosophy, depth]
+    triggers: [analyze deeply, understand, inhabit, get in]
+
+  diairesis:
+    path: philosophy/skills/diairesis.md
+    tokens: 180
+    tags: [philosophy, decomposition]
+    triggers: [complex, break down, architecture, decompose]
+
+  arche:
+    path: philosophy/skills/arche.md
+    tokens: 180
+    tags: [philosophy, principles]
+    triggers: [universal, generalize, underlying principle, root]
+
+  dikaiosyne:
+    path: philosophy/skills/dikaiosyne.md
+    tokens: 180
+    tags: [philosophy, fairness]
+    triggers: [deal, partnership, pricing, fair, mutual benefit]
+
+  pistis:
+    path: philosophy/skills/pistis.md
+    tokens: 180
+    tags: [philosophy, verification]
+    triggers: [trust, verify, anti-hallucination, check]
+
+  anamnesis:
+    path: philosophy/skills/anamnesis.md
+    tokens: 180
+    tags: [philosophy, memory]
+    triggers: [remember, check memory, history, last time]
+
+  eros:
+    path: philosophy/skills/eros.md
+    tokens: 180
+    tags: [philosophy, purpose]
+    triggers: [purpose, meaning, mission, soul work, why]
+
+  # THINKING TRAITS
+  analytical_thinking:
+    path: traits/thinking/analytical_thinking.md
+    tokens: 150
+    tags: [thinking, analysis]
+    triggers: [analyze, compare, evaluate, assess, trade-offs, pros, cons]
+
+  concise_response:
+    path: traits/thinking/concise_response.md
+    tokens: 100
+    tags: [thinking, brevity]
+    triggers: [what, when, where, who, how much, is it]
+    default_for: [question, status_update]
+
+  brainstorm_mode:
+    path: traits/thinking/brainstorm_mode.md
+    tokens: 100
+    tags: [thinking, creative]
+    triggers: [brainstorm, idea, what if, thinking, let's explore]
+
+  critical_evaluation:
+    path: traits/thinking/critical_evaluation.md
+    tokens: 150
+    tags: [thinking, risk]
+    triggers: [risk, challenge, wrong, assume, problem, concern]
+
+  decision_testing:
+    path: traits/thinking/decision_testing.md
+    tokens: 200
+    tags: [thinking, validation]
+    triggers: [both sides, should I, test, validate, bilateral, why yes, why no]
+
+  layered_reveal:
+    path: traits/thinking/layered_reveal.md
+    tokens: 180
+    tags: [thinking, socratic]
+    triggers: [does it make sense, exactly, socratic, one question, layer]
+
+  # COMMUNICATION TRAITS
+  decision_framework:
+    path: traits/communication/decision_framework.md
+    tokens: 150
+    tags: [communication, decision]
+    triggers: [should I, which, choose, decide, option, pick]
+
+  voice_optimized:
+    path: traits/communication/voice_optimized.md
+    tokens: 120
+    tags: [communication, voice]
+    use_when: voice_mode
+
+  telegram_output:
+    path: traits/communication/telegram_output.md
+    tokens: 100
+    tags: [communication, telegram]
+    use_when: telegram_mode
+
+  structured_report:
+    path: traits/communication/structured_report.md
+    tokens: 120
+    tags: [communication, report]
+    use_when: delegation_result
+
+  progressive_report:
+    path: traits/communication/progressive_report.md
+    tokens: 200
+    tags: [communication, report, delegation]
+    use_when: delegation_output
+
+  progressive_response:
+    path: traits/communication/progressive_response.md
+    tokens: 180
+    tags: [communication, interactive]
+    triggers: [telegram search, retrieval, extended thinking]
+    use_when: telegram_search
+
+  response_rhythm:
+    path: traits/communication/response_rhythm.md
+    tokens: 180
+    tags: [communication, brevity]
+    triggers: [verbose, too long, too much, brevity, concise]
+
+  correction_handling:
+    path: traits/communication/correction_handling.md
+    tokens: 180
+    tags: [communication, correction]
+    triggers: [correction, not that, wrong, adjust, had too much sugar]
+
+  emotional_context:
+    path: traits/communication/emotional_context.md
+    tokens: 180
+    tags: [communication, emotional]
+    triggers: [understated, personal, shifted, missed you, a little bit]
+
+  # DOMAIN TRAITS
+  software_architecture:
+    path: traits/domains/software_architecture.md
+    tokens: 150
+    tags: [domain, architecture]
+    triggers: [architecture, Daimonion, codebase, refactor]
+
+  business_strategy:
+    path: traits/domains/business_strategy.md
+    tokens: 150
+    tags: [domain, business]
+    triggers: [revenue, pricing, market, strategy, project]
+
+  casual_conversation:
+    path: traits/domains/casual_conversation.md
+    tokens: 100
+    tags: [domain, social]
+    triggers: [hello, how are you, good morning, thanks, weather]
+
+  project_management:
+    path: traits/domains/project_management.md
+    tokens: 150
+    tags: [domain, planning]
+    triggers: [timeline, deadline, priority, task, milestone, blocker]
+
+  market_research:
+    path: traits/domains/market_research.md
+    tokens: 150
+    tags: [domain, market]
+    triggers: [competitor, market size, opportunity, landscape, industry]
+
+  current_events:
+    path: traits/domains/current_events.md
+    tokens: 150
+    tags: [domain, news]
+    triggers: [news, current events, what's happening, headlines]
+
+  frontend_development:
+    path: traits/domains/frontend_development.md
+    tokens: 150
+    tags: [domain, frontend]
+    triggers: [UI, React, frontend, component, CSS, responsive]
+
+  news_reporter:
+    path: traits/domains/news_reporter.md
+    tokens: 150
+    tags: [domain, commentary]
+    triggers: [news summary, what happened, F1, sports, politics]
+
+  # CONTEXT TRAITS
+  business_projects:
+    path: context/business_projects_template.md
+    tokens: 200
+    tags: [context, business]
+    triggers: [project, business project, active projects]
+
+  baseline_patterns:
+    path: traits/context/baseline_patterns.md
+    tokens: 200
+    tags: [context, analysis]
+    triggers: [baseline, drift, pattern check, reinforced, evolved]

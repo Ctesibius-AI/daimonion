@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+*.tmp
+.DS_Store
+
+# Benchmark data (clone separately — see docs/INSTALL.md)
+tests/benchmarks/LongMemEval/
+
+# Benchmark results (local runs)
+tests/benchmarks/results/
+
+# User data (created at runtime)
+~/.daimonion/

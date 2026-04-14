@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/pythia_gr/daimonion/.venv/bin/python /Users/pythia_gr/daimonion/src/hooks/realtime_capture.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
