@@ -14,7 +14,7 @@ Three knowledge systems existed. None talked to each other.
 |--------|--------|--------|--------|-------|--------|
 | Knowledge JSON | Free-text + category + confidence | Synapsis extractor, pythia_tools.py | 10+ pipeline files | 91 files | Stays as extraction staging |
 | MemPalace KG | Subject→predicate→object triples | MCP kg_add (manual only) | MCP kg_query, kg_timeline | 0 entries | Being eliminated — rewire to Graphiti |
-| Graphiti/Kuzu | Entities + relationships + episodes | Synapsis → GraphitiWriter.write_episode (Haiku) | Graphiti MCP server (8 tools) | 789 entities, 1,409 relations | Single source (active) |
+| Graphiti/Kuzu | Entities + relationships + episodes | Synapsis → GraphitiWriter.write_episode (Haiku) | Graphiti MCP server (7 tools) | 789 entities, 1,409 relations | Single source (active) |
 
 ## What Was Wrong
 

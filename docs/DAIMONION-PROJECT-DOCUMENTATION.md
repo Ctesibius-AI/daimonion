@@ -50,7 +50,7 @@ Daimonion addresses this by:
 | System | Technology | What It Stores | When It's Written | How It's Searched |
 |--------|-----------|----------------|-------------------|-------------------|
 | **MemPalace** | ChromaDB + SQLite KG | Verbatim conversation text + quick-lookup facts | Real-time (Stop hook during conversation) | 19 MCP tools (semantic search, KG query, diary read/write) |
-| **Graphiti** | Kuzu embedded graph DB | Entities, relationships, temporal connections | Batch (Synapsis pipeline, Haiku entity extraction) | Graphiti MCP server (8 tools: entity search, relations, multi-hop, recent, stats, fact_add, fact_query) |
+| **Graphiti** | Kuzu embedded graph DB | Entities, relationships, temporal connections | Batch (Synapsis pipeline, Haiku entity extraction) | Graphiti MCP server (7 tools: entity search, relations, multi-hop, recent, stats, fact_add, fact_query) |
 | **Wiki/Karpathy** | Obsidian-compatible markdown | Run reports, research compilations, project pages | Batch (wiki_ingester routes documents from vault/raw/) | File read, Obsidian browse |
 
 All data is stored locally at `~/.daimonion/`. No cloud storage.
@@ -351,7 +351,7 @@ Total Python: ~26,000 lines across 67 source files.
 - Diary: Haiku-generated daily summary (WORKED ON / DECIDED / COMPLETED / FLAGGED)
 - MEMORY.md: 195 entries at native Claude Code path, auto-loaded
 - Wiki: 100 pages across projects, research, run reports, briefings
-- Graphiti MCP server: 8 tools registered in Pythia (5 query + fact_add + fact_query + stats)
+- Graphiti MCP server: 7 tools registered in Pythia (entity_search, entity_relations, multi_hop, recent, stats, fact_add, fact_query)
 - Response validator: check_propeteia (rash assent), verbosity, comfort theater, filler, over-apologizing
 - QA auditor: 9 post-pipeline checks
 - Action log + run reports → vault → wiki

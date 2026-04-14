@@ -162,7 +162,7 @@ Phase 7 last — backfill through the final pipeline.
 - [x] One Synapsis pipeline, one entry point, one command
 - [x] Every run produces a report in `vault/raw/`
 - [x] MEMORY.md at native path, multi-vertex AAAK format, loaded at startup
-- [x] Graphiti queryable during conversation (MCP server, 8 tools)
+- [x] Graphiti queryable during conversation (MCP server, 7 tools)
 - [x] Wiki pages generated from Synapsis reports (wiki_ingester.py)
 - [x] Cron runs nightly without intervention
 - [x] Missing days processed, no data gaps (Mar 30 – Apr 12 backfilled)

@@ -303,7 +303,7 @@ Each skill: `SKILL.md` (stable instructions) + supporting files (evolve via Syna
 |---|---|---|---|
 | **What it stores** | Verbatim + quick facts | Verified relationships | Reports + compiled knowledge |
 | **When it's written** | Real-time (during conversation) | Batch (post-QA via Synapsis) | Batch (reports via wiki_ingester) |
-| **How it's searched** | 19 MCP tools + KG tools | Graphiti MCP server (8 tools) | file read, Obsidian browse |
+| **How it's searched** | 19 MCP tools + KG tools | Graphiti MCP server (7 tools) | file read, Obsidian browse |
 | **Input format** | Raw text | Structured entities + relations | Documents in raw/ |
 | **Quality guarantee** | Fast, imperfect | QA-verified only | Compiled from verified sources |
 | **Stock tool** | MemPalace MCP server | Graphiti + Kuzu | wiki_ingester + Obsidian |

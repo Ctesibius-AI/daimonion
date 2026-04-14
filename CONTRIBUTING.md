@@ -57,7 +57,7 @@ See [docs/DAIMONION-PROJECT-DOCUMENTATION.md](docs/DAIMONION-PROJECT-DOCUMENTATI
 
 ## Graphiti MCP Server
 
-The Graphiti MCP server at `src/mcp/graphiti_server.py` exposes the Kuzu knowledge graph to Pythia during conversation. It provides 5 tools:
+The Graphiti MCP server at `src/mcp/graphiti_server.py` exposes the Kuzu knowledge graph to Pythia during conversation. It provides 7 tools:
 
 - **entity search** — find entities by name or description
 - **relations** — get relationships for a given entity

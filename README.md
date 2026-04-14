@@ -167,7 +167,7 @@ Violation caught in nightly audit → documented in findings
 | Vertex | Technology | What It Stores | When Written | How Searched |
 |--------|-----------|----------------|--------------|-------------|
 | **MemPalace** | ChromaDB + SQLite | Verbatim conversation text + agent diary + quick-lookup facts | Real-time (Stop hook after every exchange) | 19 MCP tools: semantic search, KG query, diary read/write |
-| **Graphiti** | Kuzu embedded graph | Entities, relationships, temporal facts with validity windows | Batch (Synapsis — Haiku extracts entities per memory) | 8 MCP tools: entity search, relations, multi-hop, recent, stats, fact_add, fact_query |
+| **Graphiti** | Kuzu embedded graph | Entities, relationships, temporal facts with validity windows | Batch (Synapsis — Haiku extracts entities per memory) | 7 MCP tools: entity search, relations, multi-hop, recent, stats, fact_add, fact_query |
 | **Wiki** | Obsidian-compatible markdown | Run reports, research compilations, project pages, compiled knowledge | Batch (wiki_ingester routes documents) | File read, Obsidian browse |
 
 All data stored locally at `~/.daimonion/`. No cloud storage.
@@ -363,7 +363,7 @@ See [docs/INSTALL.md](docs/INSTALL.md) for full setup including Telegram, Graphi
 | Python 3.12+ | Core language | Yes |
 | Claude (Sonnet/Opus/Haiku) | Extraction, reasoning, entity extraction | Yes |
 | ChromaDB via MemPalace | Vector storage, 19 MCP tools | Yes |
-| Kuzu via Graphiti | Graph DB, 8 MCP tools | Optional |
+| Kuzu via Graphiti | Graph DB, 7 MCP tools | Optional |
 | sentence-transformers | Local 384-dim embeddings | Yes |
 | Brave Search | Overnight research | Optional |
 | Markdown / Obsidian | Wiki layer | Yes |
