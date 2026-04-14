@@ -15,6 +15,7 @@ LINKABLE_ENTITIES = {
     'Pythia': 'projects/pythia',
     'Graphiti': 'projects/pythia',
     'Daimonion': 'projects/daimonion',
+    'ProjectAlpha': 'projects/project_alpha',
 }
 
 
