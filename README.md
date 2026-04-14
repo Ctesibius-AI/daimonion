@@ -34,6 +34,8 @@ A [7-stage extraction pipeline](skills/extraction/) processes real conversation 
 | B1 | Soul Compiler | Compiles into `soul.md` (first-person identity document) |
 | B2 | Patterns Compiler | Compiles into `baseline_patterns.md` (drift reference) |
 
+This is a **one-time manual process** run against conversation archives. It is separate from the nightly Synapsis extraction, which uses its own four-lens extractor prompt on each day's conversations. The identity pipeline produces the deep behavioral specification; the nightly pipeline maintains and extends it.
+
 **Critical design rule:** Only the human's words are extracted. AI responses are included as context only. This prevents the system from inheriting a previous AI's agreeable language — the identity reflects how the person actually thinks, not how AI previously responded to them.
 
 The `baseline_patterns.md` output is structured behavioral data:
@@ -70,7 +72,7 @@ The philosophical layer works because of the memory system, not independently fr
 
 - Failure examples persist and compound across sessions
 - Behavioral patterns are verified against evidence with counter-examples
-- Drift is tracked — when thinking evolves, the system adapts (confirmed across 3+ consecutive nights)
+- Drift is tracked — when thinking evolves, the system adapts (the Analyzer must report drift as confirmed across 3+ nights before traits are rewritten; this is LLM-judged, not a deterministic counter)
 - Relationship dynamics are calibrated to the specific user's correction style, signals, and pacing
 - Named concepts accumulate a shared vocabulary that persists
 
@@ -178,7 +180,7 @@ All data stored locally at `~/.daimonion/`. No cloud storage.
 | **Extract** | Synapsis reads daily logs through four lenses → memories, knowledge entries, directives, entities |
 | **Deduplicate** | LLM-judged comparison against existing memories. Identical content skipped. Superseding content replaces old (correction_factor set to 0.3) |
 | **Write** | Memories → ChromaDB. Each memory → GraphitiWriter.write_episode (Haiku extracts entities and relationships). Knowledge → JSON staging + MemPalace bridge |
-| **Decay** | `score = time_factor × access_factor × correction_factor`. Accessed memories decay slower. Corrected memories decay faster. |
+| **Decay** | `score = time_factor × access_factor × correction_factor`. Access factor starts at 0.5 for unaccessed memories — effective decay is faster than the rate table alone implies. Each retrieval boosts the factor. Corrected memories (correction_factor 0.3) decay significantly faster. |
 | **Archive** | Score < 0.05 AND age > 60 days → archived. Never deleted. |
 
 ### Decay Rates
@@ -284,9 +286,9 @@ POST-PIPELINE:
 | Knowledge conflicts | Are there contradictory facts both marked active? |
 | Skill file format | Do philosophical traits have WHY/HOW/FAILURE/CARE sections? |
 
-### Health Monitor (13 Subsystems)
+### Health Monitor (5 Categories)
 
-Runs after Synapsis. Checks: Synapsis steps completed, memory storage accessible, knowledge storage accessible, graph DB healthy, vault accessible, hot cache built, research queue processed, usage tracking working, decay scores updated, recent logs present, archive directory accessible, nightly run directory created, overall pipeline health.
+Runs after Synapsis. Five categories: Synapsis pipeline completion, memory system health, graph DB integrity, vault consistency, and infrastructure (cron, disk, research queue). Each category contains multiple sub-checks.
 
 Status: `healthy` | `warning` | `critical`.
 
